@@ -428,6 +428,10 @@
     .filter-note { max-width: 480px; line-height: 1.5; }
     .subject-filter { flex: 1 1 230px; }
     .subject-filter .filter-control { width: 100%; }
+    .insight-list { display: grid; gap: 9px; margin: 0 0 16px; padding-left: 18px; color: #536176; font-size: 11px; line-height: 1.55; }
+    .insight-list strong { color: var(--slate-700); }
+    .capacity-action { display: inline-block; margin-left: 5px; padding: 2px 6px; border-radius: 999px; background: #fff0f2; color: #9b1631; font-size: 9px; font-weight: 750; }
+    .section-snapshot-note { margin: 9px 0 0; color: var(--muted); font-size: 10px; }
     #resetFilters { flex: 0 0 auto; }
     .alert-strip.is-clear { border-color: #b7dfcc; border-left-color: var(--green); background: #f0faf5; color: #236548; }
     .alert-strip.is-clear strong { color: #17613f; }
@@ -715,7 +719,7 @@
       </div>
       <div class="sidebar-note offline-note">
         <strong>Privacy & Access Control</strong>
-        Role-Based Access Control (Program Chair). Student SETE responses are anonymized; qualitative comments require ≥5 responses.
+        Program Chair – CICS Department. Student SETE responses are anonymized; qualitative comments require ≥5 responses.
       </div>
     </aside>
 
@@ -726,7 +730,7 @@
           <div class="page-subtitle">Grade submissions, SETE coverage, subject passing rates, and teaching effectiveness indicators</div>
         </div>
         <div class="top-actions">
-          <span class="snapshot-pill"><span class="snapshot-dot"></span> RBAC: CICS Program Chair · Anonymized View</span>
+          <span class="snapshot-pill"><span class="snapshot-dot"></span> Program Chair – CICS Department · Anonymized View</span>
           <div class="notification-anchor">
             <button class="notification-toggle" id="notificationToggle" type="button" aria-label="Open notifications" aria-expanded="false" aria-controls="notificationPopover">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
@@ -763,6 +767,16 @@
 
         <section class="filters" aria-label="Dashboard filters">
           <div class="filter-group">
+            <label for="yearLevelFilter">Year Level</label>
+            <select class="filter-control" id="yearLevelFilter">
+              <option value="All" selected>All Year Levels</option>
+              <option value="1">1st Year</option>
+              <option value="2">2nd Year</option>
+              <option value="3">3rd Year</option>
+              <option value="4">4th Year</option>
+            </select>
+          </div>
+          <div class="filter-group">
             <label for="yearFilter">Academic year</label>
             <select class="filter-control" id="yearFilter">
               <option value="2025-2026" selected>2025–2026</option>
@@ -796,57 +810,77 @@
 
         <div class="alert-strip" id="alertStrip" role="status" aria-live="polite"></div>
 
-        <section class="part3-kpi-grid" aria-label="Five calculated key performance indicators">
+        <section class="part3-kpi-grid" aria-label="Five Program Chair key performance indicators">
           <article class="kpi-card part3-kpi" data-kpi-card="late" style="--kpi-color:#9b1631;--icon-bg:#fff0f2">
             <div class="kpi-top"><span class="kpi-icon" aria-hidden="true">◷</span></div>
-            <div class="kpi-label">Late Grade Submission Rate</div>
+            <div class="kpi-label">Section Capacity Utilization</div>
             <div class="kpi-value" id="kpiLateValue">Calculating…</div>
             <div class="kpi-status" id="kpiLateStatus">Calculating status</div>
-            <div class="kpi-target">Target: ≤ 5%</div>
+            <div class="kpi-target">Target: 85%–95%</div>
             <div class="kpi-count" id="kpiLateCount"></div>
             <button class="kpi-link" type="button" data-kpi="late">View list <span aria-hidden="true">→</span></button>
           </article>
-          <article class="kpi-card part3-kpi" data-kpi-card="response" style="--kpi-color:#138a5b;--icon-bg:#e7f5ef">
+          <article class="kpi-card part3-kpi" data-kpi-card="coverage" style="--kpi-color:#138a5b;--icon-bg:#e7f5ef">
+            <div class="kpi-top"><span class="kpi-icon" aria-hidden="true">◎</span></div>
+            <div class="kpi-label">CICS Semester Dropout Rate</div>
+            <div class="kpi-value" id="kpiCoverageValue">Calculating…</div>
+            <div class="kpi-status" id="kpiCoverageStatus">Calculating status</div>
+            <div class="kpi-target">Target: &lt; 5.0%</div>
+            <div class="kpi-count" id="kpiCoverageCount"></div>
+            <button class="kpi-link" type="button" data-kpi="coverage">View list <span aria-hidden="true">→</span></button>
+          </article>
+          <article class="kpi-card part3-kpi" data-kpi-card="passing" style="--kpi-color:#138a5b;--icon-bg:#e7f5ef">
+            <div class="kpi-top"><span class="kpi-icon" aria-hidden="true">✓</span></div>
+            <div class="kpi-label">Student Passing Rate per Section</div>
+            <div class="kpi-value" id="kpiPassingValue">Calculating…</div>
+            <div class="kpi-status" id="kpiPassingStatus">Calculating status</div>
+            <div class="kpi-target">Target: &gt; 80%</div>
+            <div class="kpi-count" id="kpiPassingCount"></div>
+            <button class="kpi-link" type="button" data-kpi="passing">View list <span aria-hidden="true">→</span></button>
+          </article>
+          <article class="kpi-card part3-kpi" data-kpi-card="facultyScore" style="--kpi-color:#a51634;--icon-bg:#fff0f2">
+            <div class="kpi-top"><span class="kpi-icon" aria-hidden="true">★</span></div>
+            <div class="kpi-label">SETE Composite Score</div>
+            <div class="kpi-value" id="kpiFacultyScoreValue">Calculating…</div>
+            <div class="kpi-status" id="kpiFacultyScoreStatus">Calculating status</div>
+            <div class="kpi-target">Target: &gt; 4.0</div>
+            <div class="kpi-count" id="kpiFacultyScoreCount"></div>
+            <button class="kpi-link" type="button" data-kpi="facultyScore">View list <span aria-hidden="true">→</span></button>
+          </article>
+          <article class="kpi-card part3-kpi" data-kpi-card="response" style="--kpi-color:#a76a13;--icon-bg:#fff5df">
             <div class="kpi-top"><span class="kpi-icon" aria-hidden="true">✉</span></div>
             <div class="kpi-label">SETE Response Rate per Section</div>
             <div class="kpi-value" id="kpiResponseValue">Calculating…</div>
             <div class="kpi-status" id="kpiResponseStatus">Calculating status</div>
-            <div class="kpi-target">Target: ≥ 80%</div>
+            <div class="kpi-target">Target: &gt; 75%</div>
             <div class="kpi-count" id="kpiResponseCount"></div>
             <button class="kpi-link" type="button" data-kpi="response">View list <span aria-hidden="true">→</span></button>
-          </article>
-          <article class="kpi-card part3-kpi" data-kpi-card="passing" style="--kpi-color:#138a5b;--icon-bg:#e7f5ef">
-            <div class="kpi-top"><span class="kpi-icon" aria-hidden="true">✓</span></div>
-            <div class="kpi-label">Student Passing Rate per Subject</div>
-            <div class="kpi-value" id="kpiPassingValue">Calculating…</div>
-            <div class="kpi-status" id="kpiPassingStatus">Calculating status</div>
-            <div class="kpi-target">Target: ≥ 85%</div>
-            <div class="kpi-count" id="kpiPassingCount"></div>
-            <button class="kpi-link" type="button" data-kpi="passing">View list <span aria-hidden="true">→</span></button>
-          </article>
-          <article class="kpi-card part3-kpi" data-kpi-card="coverage" style="--kpi-color:#a76a13;--icon-bg:#fff5df">
-            <div class="kpi-top"><span class="kpi-icon" aria-hidden="true">◎</span></div>
-            <div class="kpi-label">SETE Rating Coverage</div>
-            <div class="kpi-value" id="kpiCoverageValue">Calculating…</div>
-            <div class="kpi-status" id="kpiCoverageStatus">Calculating status</div>
-            <div class="kpi-target">Target: ≥ 95%</div>
-            <div class="kpi-count" id="kpiCoverageCount"></div>
-            <button class="kpi-link" type="button" data-kpi="coverage">View list <span aria-hidden="true">→</span></button>
-          </article>
-          <article class="kpi-card part3-kpi" data-kpi-card="facultyScore" style="--kpi-color:#a51634;--icon-bg:#fff0f2">
-            <div class="kpi-top"><span class="kpi-icon" aria-hidden="true">★</span></div>
-            <div class="kpi-label">Average Faculty SETE Score</div>
-            <div class="kpi-value" id="kpiFacultyScoreValue">Calculating…</div>
-            <div class="kpi-status" id="kpiFacultyScoreStatus">Calculating status</div>
-            <div class="kpi-target">Target: ≥ 4.20 / 5.00</div>
-            <div class="kpi-count" id="kpiFacultyScoreCount"></div>
-            <button class="kpi-link" type="button" data-kpi="facultyScore">View list <span aria-hidden="true">→</span></button>
           </article>
         </section>
 
         <p class="simulation-note">
-          All KPI and chart figures are computed from the hardcoded sample presets for all 20 CICS sections and four academic terms. These illustrative records are not official institutional data.
+          KPI summaries reflect the Program Chair figures provided for this dashboard. Existing chart records remain illustrative hardcoded samples and are not official institutional data.
         </p>
+
+        <section class="panel" aria-labelledby="insightsTitle">
+          <div class="panel-head">
+            <div><h2 class="panel-title" id="insightsTitle">Key Insights &amp; Recommended Actions for Program Chair</h2></div>
+          </div>
+          <div class="panel-body">
+            <ul class="insight-list">
+              <li><strong>Enrollment Capacity:</strong> CS-105 and IT-201 have reached 100% capacity with 12 waitlisted students. Action: <span class="capacity-action">Open 5 additional slots in Section A</span>.</li>
+              <li><strong>CICS Dropout Tracking:</strong> Current semester dropout rate is 4.2% (18 students). 2nd-Year CICS shows the highest mid-semester attrition (6.1%)—filter by Year Level below to inspect affected sections.</li>
+              <li><strong>Passing Rate vs. SETE Validity:</strong> Section C posted a 91% passing rate but only a 32% SETE response rate; treat evaluation scores for this section with caution.</li>
+            </ul>
+            <div class="table-wrap">
+              <table class="modal-table" aria-label="Section capacity and dropout snapshot by year level">
+                <thead><tr><th>Section</th><th>Year Level</th><th>Capacity / Slots</th><th>Dropouts</th></tr></thead>
+                <tbody id="sectionSnapshotRows"></tbody>
+              </table>
+            </div>
+            <p class="section-snapshot-note">Capacity uses the sample section roster as the slot limit. Section-level dropout counts are illustrative allocations of the reported 18-student total; replace them with verified registrar records when available.</p>
+          </div>
+        </section>
 
         <section class="viz-grid" aria-label="BAT 405 Part III visualizations">
           <article class="panel viz-panel" id="passing-by-section">
@@ -996,7 +1030,7 @@
         target: ".part3-kpi-grid",
         mobileTarget: ".part3-kpi",
         title: "Dashboard Overview",
-        description: "These five KPI cards summarize grade timeliness, SETE participation and coverage, subject passing, and faculty SETE scores. Status badges compare each current result with its target."
+        description: "These five KPI cards summarize capacity, dropout rate, passing rate, SETE response, and the composite teaching-effectiveness score."
       },
       {
         target: ".sidebar nav",
@@ -1008,7 +1042,7 @@
         target: ".filters",
         mobileTarget: ".filters .filter-group:first-child",
         title: "Filters and Controls",
-        description: "Choose an academic year, semester, track, and subject to recalculate the KPI cards and charts. Use Reset Filters to restore the default view."
+        description: "Choose a year level, academic year, semester, track, and subject to filter the section charts and snapshot. Use Reset Filters to restore the default view."
       },
       {
         target: "#passing-by-section .panel-head",
@@ -1464,13 +1498,6 @@
       })
     ]));
 
-    const KPI_TARGETS = {
-      late: { target: 5, higherIsBetter: false },
-      response: { target: 80, higherIsBetter: true },
-      passing: { target: 85, higherIsBetter: true },
-      coverage: { target: 95, higherIsBetter: true },
-      facultyScore: { target: 4.2, higherIsBetter: true, scale: 5 }
-    };
     let lastDashboardData = null;
     let lastDashboardMetrics = null;
     let activeNotifications = [];
@@ -1480,24 +1507,20 @@
       return denominator ? numerator / denominator * 100 : 0;
     }
 
-    function statusFor(value, target, higherIsBetter, scale) {
-      if (higherIsBetter ? value >= target : value <= target) return "on-target";
-      const warningGap = scale === 5 ? 0.2 : 10;
-      const withinWarningBand = higherIsBetter ? value >= target - warningGap : value <= target + warningGap;
-      return withinWarningBand ? "warning" : "critical";
-    }
-
     function statusLabel(status) {
-      return status === "on-target" ? "On target" : status === "warning" ? "Below target" : "Critical";
+      return status === "on-target" ? "On Target" : status === "warning" ? "Warning" : "Critical";
     }
 
     function selectedDashboardData() {
       const termKey = `${$("yearFilter").value}|${$("semesterFilter").value}`;
+      const selectedYearLevel = $("yearLevelFilter").value;
       const selectedTrack = $("trackFilter").value;
       const selectedSubject = $("subjectFilter").value;
-      const matchesTrack = (record) => selectedTrack === "All" || record.track === selectedTrack;
+      const matchesFilters = (record) =>
+        (selectedYearLevel === "All" || String(record.yearLevel) === selectedYearLevel) &&
+        (selectedTrack === "All" || record.track === selectedTrack);
       const assignments = sectionAssignmentsByTerm[termKey].filter((record) =>
-        matchesTrack(record) && (selectedSubject === "All" || record.subject === selectedSubject)
+        matchesFilters(record) && (selectedSubject === "All" || record.subject === selectedSubject)
       );
       const assignmentKeys = new Set(assignments.map((record) => record.key));
       const sectionIds = new Set(assignments.map((record) => record.sectionId));
@@ -1514,6 +1537,7 @@
         termKey,
         year: $("yearFilter").value,
         semester: $("semesterFilter").value,
+        yearLevel: selectedYearLevel,
         track: selectedTrack,
         subject: selectedSubject,
         assignments,
@@ -1525,6 +1549,42 @@
         eligibleFaculty,
         scores
       };
+    }
+
+    const YEAR_LEVEL_DROPOUT_TOTALS = { 1: 4, 2: 6, 3: 4, 4: 4 };
+
+    function sectionDropoutCount(section) {
+      const yearSections = sectionDefinitions.filter((record) => record.yearLevel === section.yearLevel);
+      const sectionIndex = yearSections.findIndex((record) => record.id === section.id);
+      const total = YEAR_LEVEL_DROPOUT_TOTALS[section.yearLevel];
+      return Math.floor(total / yearSections.length) + Number(sectionIndex < total % yearSections.length);
+    }
+
+    function sectionOperationalRows(data) {
+      return data.sections.map((section) => {
+        const capacity = section.roster;
+        const enrolled = section.enrolled;
+        const availableSlots = Math.max(0, capacity - enrolled);
+        const dropouts = sectionDropoutCount(section);
+        const status = `${enrolled}/${capacity} ${availableSlots ? `· ${availableSlots} slots open` : "Full"} · ${dropouts} dropouts`;
+        const detail = {
+          section: `Section ${section.id} · Year ${section.yearLevel} · ${section.track}`,
+          subject: "Section capacity and dropout snapshot",
+          subjectCode: "All assigned subjects",
+          faculty: "Program Chair overview",
+          status,
+          capacity,
+          enrolled,
+          yearLevel: section.yearLevel,
+          availableSlots,
+          dropouts,
+          overdue: availableSlots === 0
+        };
+        detail.action = availableSlots
+          ? `${availableSlots} roster slots remain available; continue enrollment monitoring.`
+          : "Capacity reached. Review waitlisted enrollment and coordinate additional slots.";
+        return detail;
+      });
     }
 
     function computeMetrics(data) {
@@ -1543,50 +1603,64 @@
       const totalCoverageCount = data.sections.length;
       const ratedCoverageCount = ratedSections.length;
       const unratedCoverageCount = totalCoverageCount - ratedCoverageCount;
-      const coverageRate = percent(ratedCoverageCount, totalCoverageCount);
-      const averageFacultyScore = ratedSections.length
-        ? ratedSections.reduce((sum, section) => sum + section.score, 0) / ratedSections.length
-        : 0;
       const kpis = {
         late: {
-          title: "Late Grade Submission Rate",
-          value: percent(lateCount, data.submissions.length),
-          count: `${lateCount} late / ${data.submissions.length} expected; ${overduePendingCount} overdue pending`,
-          ...KPI_TARGETS.late
+          title: "Section Capacity Utilization",
+          value: 98,
+          displayValue: "98%",
+          count: "12 Waitlisted – Open Slots Needed",
+          target: 95,
+          targetText: "85%–95%",
+          higherIsBetter: false,
+          status: "critical"
         },
         response: {
           title: "SETE Response Rate per Section",
-          value: percent(responseCount, invitedCount),
-          count: `${responseCount} responses / ${invitedCount} invited`,
-          ...KPI_TARGETS.response
+          value: 68,
+          displayValue: "68%",
+          count: "Low turnout in 3 sections",
+          target: 75,
+          targetText: "> 75%",
+          higherIsBetter: true,
+          status: "warning"
         },
         passing: {
-          title: "Student Passing Rate per Subject",
-          value: percent(passCount, data.grades.length),
-          count: `${passCount} passed / ${data.grades.length} subject-grade records`,
-          ...KPI_TARGETS.passing
+          title: "Student Passing Rate per Section",
+          value: 84.5,
+          displayValue: "84.5%",
+          count: "Distinct from SETE response rate",
+          target: 80,
+          targetText: "> 80%",
+          higherIsBetter: true,
+          status: "on-target"
         },
         coverage: {
-          title: "SETE Rating Coverage",
-          value: coverageRate,
-          count: `${ratedCoverageCount} rated / ${totalCoverageCount} section assignments`,
+          title: "CICS Semester Dropout Rate",
+          value: 4.2,
+          displayValue: "4.2%",
+          count: "18 Dropped / 428 Enrolled across Year Levels",
+          target: 5,
+          targetText: "< 5.0%",
+          higherIsBetter: false,
+          status: "on-target",
           ratedCount: ratedCoverageCount,
           unratedCount: unratedCoverageCount,
           totalCount: totalCoverageCount,
-          ...KPI_TARGETS.coverage
         },
         facultyScore: {
-          title: "Average Faculty SETE Score",
-          value: averageFacultyScore,
-          count: `Mean across ${ratedCoverageCount} rated sections (${ratedFaculty.size} faculty)`,
+          title: "SETE Composite Score",
+          value: 4.32,
+          displayValue: "4.32 / 5.0",
+          count: "Faculty Teaching Effectiveness",
+          target: 4,
+          targetText: "> 4.0",
+          higherIsBetter: true,
+          scale: 5,
+          status: "on-target",
           ratedSections: ratedCoverageCount,
           facultyCount: ratedFaculty.size,
-          ...KPI_TARGETS.facultyScore
         }
       };
-      Object.values(kpis).forEach((metric) => {
-        metric.status = statusFor(metric.value, metric.target, metric.higherIsBetter, metric.scale);
-      });
       return { ...kpis, lateCount, overduePendingCount, responseCount, invitedCount, passCount, ratedFaculty };
     }
 
@@ -1600,9 +1674,9 @@
       ];
       map.forEach(([key, suffix]) => {
         const metric = metrics[key];
-        $(`kpi${suffix}Value`).textContent = metric.scale
+        $(`kpi${suffix}Value`).textContent = metric.displayValue || (metric.scale
           ? `${metric.value.toFixed(2)} / ${metric.scale.toFixed(2)}`
-          : `${metric.value.toFixed(1)}%`;
+          : `${metric.value.toFixed(1)}%`);
         const status = $(`kpi${suffix}Status`);
         status.className = `kpi-status ${metric.status}`;
         status.textContent = statusLabel(metric.status);
@@ -1620,12 +1694,13 @@
     }
 
     function metricValueLabel(metric) {
-      return metric.scale
+      return metric.displayValue || (metric.scale
         ? `${metric.value.toFixed(2)} / ${metric.scale.toFixed(2)}`
-        : `${metric.value.toFixed(1)}%`;
+        : `${metric.value.toFixed(1)}%`);
     }
 
     function metricTargetLabel(metric) {
+      if (metric.targetText) return `Target ${metric.targetText}`;
       const direction = metric.higherIsBetter ? "≥" : "≤";
       return metric.scale
         ? `Target ${direction} ${metric.target.toFixed(2)} / ${metric.scale.toFixed(2)}`
@@ -1929,7 +2004,7 @@
         const anchor = row.rate > 91 ? "end" : "start";
         return `<g class="chart-mark" data-section-id="${row.id}" tabindex="0" role="button" aria-label="Inspect section ${row.id}, passing rate ${row.rate.toFixed(1)} percent">
           <title>Section ${row.id} · ${escapeHtml(row.trackName)} · ${row.rate.toFixed(1)}% passing</title>
-          <text class="chart-section-label" x="${left - 8}" y="${y + 4}" text-anchor="end">Sec ${row.id} - ${row.track === "CORE" ? "Core" : row.track}</text>
+          <text class="chart-section-label" x="${left - 8}" y="${y + 4}" text-anchor="end">Sec ${row.id} · Yr ${row.yearLevel}</text>
           <line x1="${left}" y1="${y}" x2="${xAt(row.rate)}" y2="${y}" stroke="${color}" stroke-width="4" stroke-linecap="round"/>
           <circle cx="${xAt(row.rate)}" cy="${y}" r="5" fill="${color}" stroke="#fff" stroke-width="2"/>
           <text class="chart-value-label" x="${labelX}" y="${y + 4}" text-anchor="${anchor}">${row.rate.toFixed(1)}%</text>
@@ -1989,7 +2064,7 @@
         const label = `${row.rate.toFixed(1)}% (${row.responses}/${row.invited})`;
         return `<g class="chart-mark response-section-mark" data-response-section-id="${row.id}" tabindex="0" role="button" aria-label="Inspect section ${row.id} ${escapeHtml(row.trackName)}: ${row.rate.toFixed(1)} percent, ${row.responses} of ${row.invited} responses">
           <title>Section ${row.id} · ${escapeHtml(row.trackName)} · ${label}</title>
-          <text class="chart-section-label" x="${left - 8}" y="${y + 4}" text-anchor="end">Sec ${row.id} - ${row.track === "CORE" ? "Core" : row.track}</text>
+          <text class="chart-section-label" x="${left - 8}" y="${y + 4}" text-anchor="end">Sec ${row.id} · Yr ${row.yearLevel}</text>
           <rect x="${left}" y="${y - 6}" width="${Math.max(0, xAt(row.rate) - left)}" height="12" rx="6" fill="${color}"/>
           <text class="chart-value-label" x="${width - right + 8}" y="${y + 4}" text-anchor="start">${label}</text>
         </g>`;
@@ -2180,6 +2255,18 @@
       $("trendTrackLabel").title = data.subject === "All" ? "All subjects" : SUBJECT_NAMES[data.subject];
     }
 
+    function renderSectionSnapshot(data) {
+      $("sectionSnapshotRows").innerHTML = sectionOperationalRows(data).map((record) => `
+        <tr>
+          <td>${escapeHtml(record.section)}</td>
+          <td>Year ${record.yearLevel}</td>
+          <td>${record.enrolled}/${record.capacity}${record.availableSlots
+            ? ` · ${record.availableSlots} slots open`
+            : ` Full <span class="capacity-action">Open slots</span>`}</td>
+          <td>${record.dropouts}</td>
+        </tr>`).join("");
+    }
+
     function renderDashboard() {
       const data = selectedDashboardData();
       const metrics = computeMetrics(data);
@@ -2191,6 +2278,7 @@
       renderNotifications(data);
       renderKpis(metrics);
       renderAlert(metrics);
+      renderSectionSnapshot(data);
       renderPassingChart(data);
       renderResponseChart(data);
       renderCoverageChart(data, metrics);
@@ -2275,6 +2363,12 @@
 
     function recordsForKpi(key, data) {
       const rows = assignmentDetailRows(data);
+      if (key === "late") {
+        return sectionOperationalRows(data);
+      }
+      if (key === "coverage") {
+        return sectionOperationalRows(data).filter((record) => record.dropouts > 0);
+      }
       if (key === "facultyScore") {
         return data.sections.filter((section) => section.rated).map((section) => {
           const sectionAssignmentsList = data.assignments.filter((record) => record.sectionId === section.id);
@@ -2295,10 +2389,6 @@
           return detail;
         });
       }
-      if (key === "late") {
-        const lateRows = rows.filter((record) => record.overdue);
-        return lateRows.length ? lateRows : rows;
-      }
       if (key === "response") {
         const lowRows = rows.filter((record) => record.responseRate < 80);
         return lowRows.length ? lowRows : rows;
@@ -2308,7 +2398,7 @@
         const gradeRows = rows.filter((record) => record.passRate !== null);
         return belowTarget.length ? belowTarget : gradeRows;
       }
-      if (key === "coverage" || key === "coverage-unrated" || key === "coverage-rated") {
+      if (key === "coverage-unrated" || key === "coverage-rated") {
         let targetSections = data.sections;
         if (key === "coverage-unrated") {
           targetSections = data.sections.filter((s) => !s.rated);
@@ -2510,10 +2600,11 @@
         mark.dispatchEvent(new MouseEvent("click", { bubbles: true }));
       }
     });
-    ["yearFilter", "semesterFilter", "trackFilter", "subjectFilter"].forEach((id) => {
+    ["yearLevelFilter", "yearFilter", "semesterFilter", "trackFilter", "subjectFilter"].forEach((id) => {
       $(id).addEventListener("change", renderDashboard);
     });
     $("resetFilters").addEventListener("click", () => {
+      $("yearLevelFilter").value = "All";
       $("yearFilter").value = "2025-2026";
       $("semesterFilter").value = "1st Semester";
       $("trackFilter").value = "All";
