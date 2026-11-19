@@ -106,6 +106,8 @@
     .page-subtitle { margin-top: 2px; color: var(--muted); font-size: 12px; }
     .top-actions { display: flex; align-items: center; gap: 10px; }
     .tour-help-button { white-space: nowrap; }
+    .help-action { display: grid; justify-items: end; gap: 2px; }
+    .help-hint { color: #64748b; font-size: 9px; white-space: nowrap; }
     .notification-anchor { position: relative; }
     .notification-toggle {
       position: relative;
@@ -279,7 +281,7 @@
     .panel-title { margin: 0; color: var(--slate-700); font-size: 13px; font-weight: 750; }
     .panel-description { margin-top: 4px; color: var(--muted); font-size: 10px; }
     .panel-body { padding: 0 19px 18px; }
-    .term-tag { padding: 5px 8px; border-radius: 6px; background: #f4f6f9; color: #66748a; font-size: 10px; font-weight: 700; white-space: nowrap; }
+    .term-tag { display: inline-flex; margin-top: 8px; padding: 5px 10px; border-radius: 99px; background: #f1f5f9; color: #536176; font-size: 10px; font-weight: 700; white-space: nowrap; }
     .grade-chart { display: grid; gap: 18px; padding-top: 10px; }
     .grade-row { display: grid; grid-template-columns: 135px minmax(0, 1fr) 45px; align-items: center; gap: 12px; }
     .grade-name { color: #4a576b; font-size: 11px; font-weight: 650; }
@@ -440,19 +442,20 @@
     .viz-panel { scroll-margin-top: 92px; }
     .viz-panel.trend-panel { grid-column: 1 / -1; }
     .chart-svg { display: block; width: 100%; height: auto; overflow: visible; }
-    .response-chart-viewport { height: 310px; overflow-y: auto; overflow-x: hidden; }
+    .response-chart-viewport { height: 324px; overflow-y: auto; overflow-x: hidden; }
     .response-chart-svg { width: 100%; }
     .chart-svg text { font-family: "Segoe UI", Arial, sans-serif; }
     .chart-axis-label { fill: #64748b; font-size: 11px; }
-    .chart-section-label { fill: #202b3c; color: #202b3c; font-size: 12px; font-weight: 700; }
-    .chart-value-label { fill: #202b3c; color: #202b3c; font-size: 11.5px; font-weight: 700; }
+    .chart-section-label { fill: #202b3c; color: #202b3c; font-size: 11px; font-weight: 700; }
+    .chart-value-label { fill: #202b3c; color: #202b3c; font-size: 11px; font-weight: 700; }
     .chart-target-line { stroke: #b77713; stroke-dasharray: 6 5; stroke-width: 2; }
     .response-target-line { stroke: #a76a13; stroke-dasharray: 7 5; stroke-width: 2.5; }
     .chart-grid-line { stroke: #e8edf2; stroke-width: 1; }
-    .passing-chart-viewport { height: 310px; overflow-y: auto; overflow-x: hidden; overscroll-behavior: contain; }
+    .passing-chart-viewport { height: 324px; overflow-y: auto; overflow-x: hidden; overscroll-behavior: contain; }
     .passing-chart-svg { width: 100%; }
-    .coverage-chart-viewport { height: 260px; overflow-y: auto; overflow-x: hidden; }
+    .coverage-chart-viewport { height: auto; overflow: visible; }
     .coverage-chart-svg { width: 100%; }
+    .coverage-target-badge { padding: 8px 13px; border: 1px solid #b7ead5; border-radius: 99px; background: #effcf6; color: #138a5b; font-size: 10px; font-weight: 750; line-height: 1.35; text-align: left; }
     .chart-mark { cursor: pointer; }
     .chart-mark:focus { outline: none; }
     .chart-mark:focus circle { stroke: #334155; stroke-width: 3; }
@@ -750,7 +753,10 @@
               <div class="notification-list" id="notificationPreview" aria-live="polite"></div>
             </div>
           </div>
-          <button class="button tour-help-button" id="takeTourButton" type="button" aria-label="Take the dashboard tour">? &nbsp; Take a tour</button>
+          <div class="help-action">
+            <button class="button tour-help-button" id="takeTourButton" type="button" aria-label="Open dashboard help" title="Open dashboard help">? &nbsp; Help</button>
+            <span class="help-hint">Use Help to learn what each metric and control means.</span>
+          </div>
           <button class="button" type="button" onclick="window.print()">Print / Save PDF</button>
         </div>
       </header>
@@ -885,8 +891,7 @@
         <section class="viz-grid" aria-label="BAT 405 Part III visualizations">
           <article class="panel viz-panel" id="passing-by-section">
             <div class="panel-head">
-              <div><h2 class="panel-title">Student Passing Rate per Section</h2><div class="panel-description">Section comparison against the 85% target; values are shown to one decimal place.</div></div>
-              <span class="term-tag" id="passingChartTerm"></span>
+              <div><h2 class="panel-title">Student Passing Rate per Section</h2><div class="panel-description">Section comparison against the 85% target; click any bar to inspect details.</div><span class="term-tag" id="passingChartTerm"></span></div>
             </div>
             <div class="panel-body">
               <div class="passing-chart-viewport" id="passingChart" aria-live="polite"></div>
@@ -902,8 +907,7 @@
 
           <article class="panel viz-panel response-panel" id="response-by-section">
             <div class="panel-head">
-              <div><h2 class="panel-title">SETE Response Rate per Section</h2><div class="panel-description">Lowest response rates appear first; bars compare each section with the 80% target.</div></div>
-              <span class="term-tag" id="responseChartTerm"></span>
+              <div><h2 class="panel-title">SETE Response Rate per Section</h2><div class="panel-description">Lowest response rates appear first; bars compare each section with the 80% target.</div><span class="term-tag" id="responseChartTerm"></span></div>
             </div>
             <div class="panel-body">
               <div class="response-chart-viewport" id="seteResponseChart" aria-live="polite"></div>
@@ -922,12 +926,13 @@
               <div>
                 <h2 class="panel-title">SETE Rating Coverage</h2>
                 <div class="panel-description">Section SETE evaluation completion rate compared against the 95% target.</div>
+                <span class="term-tag" id="coverageChartTerm"></span>
               </div>
-              <span class="term-tag" id="coverageChartTerm"></span>
+              <span class="coverage-target-badge">Target<br>95%</span>
             </div>
             <div class="panel-body">
               <div class="coverage-chart-viewport" id="seteCoverageChart" aria-live="polite"></div>
-              <div class="chart-footnote">Target is ≥ 95.0% coverage. Click the amber Pending slice or legend to view pending section assignments.</div>
+              <div class="chart-footnote">Target is ≥ 95.0% coverage. Select a rated or pending ring segment to inspect its section records.</div>
             </div>
           </article>
 
@@ -1003,7 +1008,7 @@
       <p class="tour-description" id="tourStepDescription"></p>
       <div class="tour-progress-meta">
         <span id="tourStepCounter" aria-live="polite"></span>
-        <span>Dashboard onboarding</span>
+        <span>Dashboard help</span>
       </div>
       <div class="tour-progress-track" role="progressbar" id="tourProgress" aria-label="Tour progress" aria-valuemin="1" aria-valuemax="9" aria-valuenow="1">
         <div class="tour-progress-fill" id="tourProgressFill"></div>
@@ -2137,33 +2142,29 @@
       const target = 85;
       const width = 540;
       const left = 115;
-      const right = 50;
-      const top = 34;
-      const rowHeight = 28;
+      const right = 35;
+      const top = 48;
+      const rowHeight = 35;
       const plotWidth = width - left - right;
-      const height = top + rows.length * rowHeight + 34;
+      const height = top + rows.length * rowHeight + 10;
       const xAt = (value) => left + plotWidth * value / 100;
-      const grid = [0, 25, 50, 75, 100].map((value) =>
-        `<line class="chart-grid-line" x1="${xAt(value)}" y1="${top - 8}" x2="${xAt(value)}" y2="${top + rows.length * rowHeight - 8}"/>
-         <text class="chart-axis-label" x="${xAt(value)}" y="${height - 8}" text-anchor="middle">${value}%</text>`
-      ).join("");
       const marks = rows.map((row, index) => {
         const y = top + index * rowHeight + 10;
         const color = row.rate < 75 ? "#9b1631" : row.rate < target ? "#b77713" : "#138a5b";
-        const labelX = row.rate > 91 ? xAt(row.rate) - 10 : xAt(row.rate) + 10;
-        const anchor = row.rate > 91 ? "end" : "start";
         return `<g class="chart-mark" data-section-id="${row.id}" tabindex="0" role="button" aria-label="Inspect section ${row.id}, passing rate ${row.rate.toFixed(1)} percent">
           <title>Section ${row.id} · ${escapeHtml(row.trackName)} · ${row.rate.toFixed(1)}% passing</title>
           <text class="chart-section-label" x="${left - 8}" y="${y + 4}" text-anchor="end">Sec ${row.id} · Yr ${row.yearLevel}</text>
-          <line x1="${left}" y1="${y}" x2="${xAt(row.rate)}" y2="${y}" stroke="${color}" stroke-width="4" stroke-linecap="round"/>
-          <circle cx="${xAt(row.rate)}" cy="${y}" r="5" fill="${color}" stroke="#fff" stroke-width="2"/>
-          <text class="chart-value-label" x="${labelX}" y="${y + 4}" text-anchor="${anchor}">${row.rate.toFixed(1)}%</text>
+          <line x1="${left}" y1="${y}" x2="${xAt(100)}" y2="${y}" stroke="#edf2f7" stroke-width="7" stroke-linecap="round"/>
+          <line x1="${left}" y1="${y}" x2="${xAt(row.rate)}" y2="${y}" stroke="${color}" stroke-width="7" stroke-linecap="round"/>
+          <circle cx="${xAt(row.rate)}" cy="${y}" r="8" fill="${color}" stroke="#fff4d8" stroke-width="4"/>
+          <text class="chart-value-label" x="${width - right + 8}" y="${y + 4}" text-anchor="start">${row.rate.toFixed(1)}%</text>
         </g>`;
       }).join("");
       const toggleLabel = passingShowAll ? `Show Bottom 10` : `Show All ${allRows.length} Sections`;
       $("passingChart").innerHTML = `<svg class="chart-svg passing-chart-svg" viewBox="0 0 ${width} ${height}" role="img" aria-label="Horizontal lollipop chart of student passing rates by section with an 85 percent target line">
-        ${grid}<line class="chart-target-line" x1="${xAt(target)}" y1="${top - 15}" x2="${xAt(target)}" y2="${top + rows.length * rowHeight - 7}"/>
-        <text x="${xAt(target)}" y="13" fill="#9a6717" font-size="10" font-weight="700" text-anchor="middle">85% target</text>${marks}
+        <line class="chart-target-line" x1="${xAt(target)}" y1="${top - 15}" x2="${xAt(target)}" y2="${top + rows.length * rowHeight - 8}"/>
+        <rect x="${xAt(target) + 56}" y="0" width="98" height="22" rx="7" fill="#fffaf0" stroke="#f1d27c"/>
+        <text x="${xAt(target) + 105}" y="14" fill="#9a6717" font-size="10" font-weight="700" text-anchor="middle">85% target line</text>${marks}
       </svg>`;
       let toggleBtn = document.getElementById("passingToggle");
       if (!toggleBtn) {
@@ -2198,16 +2199,12 @@
       const target = 80;
       const width = 540;
       const left = 115;
-      const right = 130;
-      const top = 34;
-      const rowHeight = 28;
+      const right = 95;
+      const top = 48;
+      const rowHeight = 35;
       const plotWidth = width - left - right;
-      const height = top + rows.length * rowHeight + 34;
+      const height = top + rows.length * rowHeight + 10;
       const xAt = (value) => left + plotWidth * value / 100;
-      const grid = [0, 20, 40, 60, 80, 100].map((value) =>
-        `<line class="chart-grid-line" x1="${xAt(value)}" y1="${top - 8}" x2="${xAt(value)}" y2="${top + rows.length * rowHeight - 8}"/>
-         <text class="chart-axis-label" x="${xAt(value)}" y="${height - 8}" text-anchor="middle">${value}%</text>`
-      ).join("");
       const marks = rows.map((row, index) => {
         const y = top + index * rowHeight + 10;
         const color = row.rate < 75 ? "#bd394c" : row.rate < target ? "#a76a13" : "#19856b";
@@ -2215,14 +2212,16 @@
         return `<g class="chart-mark response-section-mark" data-response-section-id="${row.id}" tabindex="0" role="button" aria-label="Inspect section ${row.id} ${escapeHtml(row.trackName)}: ${row.rate.toFixed(1)} percent, ${row.responses} of ${row.invited} responses">
           <title>Section ${row.id} · ${escapeHtml(row.trackName)} · ${label}</title>
           <text class="chart-section-label" x="${left - 8}" y="${y + 4}" text-anchor="end">Sec ${row.id} · Yr ${row.yearLevel}</text>
-          <rect x="${left}" y="${y - 6}" width="${Math.max(0, xAt(row.rate) - left)}" height="12" rx="6" fill="${color}"/>
-          <text class="chart-value-label" x="${width - right + 8}" y="${y + 4}" text-anchor="start">${label}</text>
+          <line x1="${left}" y1="${y}" x2="${xAt(100)}" y2="${y}" stroke="#edf2f7" stroke-width="12" stroke-linecap="round"/>
+          <line x1="${left}" y1="${y}" x2="${xAt(row.rate)}" y2="${y}" stroke="${color}" stroke-width="12" stroke-linecap="round"/>
+          <text class="chart-value-label" x="${width - right + 8}" y="${y + 4}" text-anchor="start">${row.rate.toFixed(1)}% <tspan fill="#8a98ab" font-size="10">(${row.responses}/${row.invited})</tspan></text>
         </g>`;
       }).join("");
-      const targetLine = `<line class="response-target-line" x1="${xAt(target)}" y1="${top - 15}" x2="${xAt(target)}" y2="${top + rows.length * rowHeight - 7}"/>
-        <text x="${xAt(target)}" y="13" fill="#a76a13" font-size="10" font-weight="700" text-anchor="middle">80% Target</text>`;
+      const targetLine = `<line class="response-target-line" x1="${xAt(target)}" y1="${top - 15}" x2="${xAt(target)}" y2="${top + rows.length * rowHeight - 8}"/>
+        <rect x="${xAt(target) + 54}" y="0" width="98" height="22" rx="7" fill="#fffaf0" stroke="#f1d27c"/>
+        <text x="${xAt(target) + 103}" y="14" fill="#a76a13" font-size="10" font-weight="700" text-anchor="middle">80% target line</text>`;
       $("seteResponseChart").innerHTML = `<svg class="chart-svg response-chart-svg" viewBox="0 0 ${width} ${height}" role="img" aria-label="Horizontal bar chart of SETE response rates by section, sorted lowest to highest, with an 80 percent target line">
-        ${grid}${marks}${targetLine}
+        ${marks}${targetLine}
       </svg>`;
       $("responseChartTerm").textContent = `${data.semester} · ${data.year.replace("-", "–")}`;
       let toggleBtn = document.getElementById("responseToggle");
@@ -2244,63 +2243,70 @@
       const ratedCount = coverage.ratedCount;
       const unratedCount = coverage.unratedCount;
       const totalCount = coverage.totalCount;
-      const ratedPct = coverage.value;
+      const ratedPct = percent(ratedCount, totalCount);
       const unratedPct = percent(unratedCount, totalCount);
+      const target = 95;
+      const targetGap = Math.max(0, target - ratedPct);
 
       const width = 540;
-      const height = 240;
-      const cx = 130;
-      const cy = 120;
-      const r = 65;
+      const height = 310;
+      const cx = 70;
+      const cy = 86;
+      const r = 48;
       const circumference = 2 * Math.PI * r;
       const p = Math.max(0, Math.min(1, ratedPct / 100));
 
       const ratedDash = `${(p * circumference).toFixed(2)} ${circumference.toFixed(2)}`;
       const unratedDash = `${((1 - p) * circumference).toFixed(2)} ${circumference.toFixed(2)}`;
       const unratedOffset = (-p * circumference).toFixed(2);
+      const trackRows = ["CORE", "BA", "NT"].map((track) => {
+        const sections = data.sections.filter((section) => section.track === track);
+        const rated = sections.filter((section) => section.rated).length;
+        const rate = percent(rated, sections.length);
+        const label = track === "CORE" ? "General / Core" : track === "BA" ? "Business Analytics - BA" : "Networking - NT";
+        const color = rate >= 95 ? "#138a5b" : rate < 85 ? "#f59e0b" : "#059669";
+        return { label, count: sections.length, rate, color };
+      });
+      const trackMarkup = trackRows.map((row, index) => {
+        const y = 188 + index * 38;
+        return `<g>
+          <text x="0" y="${y}" font-family="'Segoe UI', Arial, sans-serif" font-size="11" font-weight="700" fill="#202b3c">${escapeHtml(row.label)} <tspan fill="#8090a5" font-weight="400">(${row.count} sections)</tspan></text>
+          <text x="540" y="${y}" text-anchor="end" font-family="'Segoe UI', Arial, sans-serif" font-size="11" font-weight="750" fill="${row.color}">${row.rate.toFixed(1)}%</text>
+          <line x1="0" y1="${y + 13}" x2="540" y2="${y + 13}" stroke="#edf2f7" stroke-width="9" stroke-linecap="round"/>
+          <line x1="0" y1="${y + 13}" x2="${5.4 * row.rate}" y2="${y + 13}" stroke="${row.color}" stroke-width="9" stroke-linecap="round"/>
+        </g>`;
+      }).join("");
+      const coverageStatus = targetGap > 0
+        ? `<rect x="0" y="0" width="158" height="27" rx="14" fill="#fffaf0" stroke="#f1d27c"/>
+          <text x="79" y="18" text-anchor="middle" font-family="'Segoe UI', Arial, sans-serif" font-size="10" font-weight="700" fill="#a76a13">• ${targetGap.toFixed(1)} pts below target</text>`
+        : `<rect x="0" y="0" width="158" height="27" rx="14" fill="#effcf6" stroke="#b7ead5"/>
+          <text x="79" y="18" text-anchor="middle" font-family="'Segoe UI', Arial, sans-serif" font-size="10" font-weight="700" fill="#138a5b">Target met</text>`;
 
-      const svg = `<svg class="chart-svg coverage-chart-svg" viewBox="0 0 ${width} ${height}" role="img" aria-label="Donut chart showing SETE rating coverage: ${ratedPct.toFixed(1)}% rated, ${unratedPct.toFixed(1)}% pending unrated">
-        <!-- Background ring -->
-        <circle cx="${cx}" cy="${cy}" r="${r}" fill="none" stroke="#edf0f3" stroke-width="28"/>
-        <!-- Rated Faculty Slice (Emerald Green) -->
+      const svg = `<svg class="chart-svg coverage-chart-svg" viewBox="0 0 ${width} ${height}" role="img" aria-label="Donut chart showing SETE rating coverage: ${ratedCount} of ${totalCount} sections rated (${ratedPct.toFixed(1)}%), with ${unratedCount} sections pending">
+        <rect x="0" y="0" width="${width}" height="145" rx="14" fill="#f8fafc" stroke="#e8eef4"/>
+        <circle cx="${cx}" cy="${cy}" r="${r}" fill="none" stroke="#edf0f3" stroke-width="18"/>
         <circle class="chart-mark" data-coverage-slice="rated" cx="${cx}" cy="${cy}" r="${r}" fill="none"
-          stroke="#19856b" stroke-width="28"
+          stroke="#9b1631" stroke-width="18"
           stroke-dasharray="${ratedDash}" stroke-dashoffset="0"
           transform="rotate(-90 ${cx} ${cy})" tabindex="0" role="button"
-          aria-label="Rated section assignments: ${ratedCount} of ${totalCount} (${ratedPct.toFixed(1)}%)">
-          <title>Rated Section Assignments: ${ratedCount} of ${totalCount} (${ratedPct.toFixed(1)}%) · Click to inspect</title>
+          aria-label="Rated sections: ${ratedCount} of ${totalCount} (${ratedPct.toFixed(1)}%)">
+          <title>Rated Sections: ${ratedCount} of ${totalCount} (${ratedPct.toFixed(1)}%) · Click to inspect</title>
         </circle>
-        <!-- Pending / Unrated Slice (Amber) -->
         ${unratedCount > 0 ? `<circle class="chart-mark" data-coverage-slice="pending" cx="${cx}" cy="${cy}" r="${r}" fill="none"
-          stroke="#a76a13" stroke-width="28"
+          stroke="#dbe4ec" stroke-width="18"
           stroke-dasharray="${unratedDash}" stroke-dashoffset="${unratedOffset}"
           transform="rotate(-90 ${cx} ${cy})" tabindex="0" role="button"
-          aria-label="Pending section assignments: ${unratedCount} of ${totalCount} (${unratedPct.toFixed(1)}%)">
-          <title>Pending Section Assignments: ${unratedCount} of ${totalCount} (${unratedPct.toFixed(1)}%) · Click to inspect</title>
+          aria-label="Sections pending ratings: ${unratedCount} of ${totalCount} (${unratedPct.toFixed(1)}%)">
+          <title>Sections Pending Ratings: ${unratedCount} of ${totalCount} (${unratedPct.toFixed(1)}%) · Click to inspect</title>
         </circle>` : ""}
-        <!-- Center Text -->
-        <text x="${cx}" y="${cy - 3}" text-anchor="middle" font-family="'Segoe UI', Arial, sans-serif" font-size="22" font-weight="800" fill="#202b3c">${ratedPct.toFixed(1)}%</text>
-        <text x="${cx}" y="${cy + 17}" text-anchor="middle" font-family="'Segoe UI', Arial, sans-serif" font-size="11" font-weight="700" fill="#64748b">${ratedCount} / ${totalCount} Assignments</text>
-
-        <!-- Right Side Legend Cards -->
-        <g transform="translate(265, 42)">
-          <!-- Rated Legend Card -->
-          <g class="chart-mark" data-coverage-slice="rated" tabindex="0" role="button" style="cursor:pointer" aria-label="View rated section assignments">
-            <rect x="0" y="0" width="255" height="54" rx="8" fill="#f0faf5" stroke="#b7dfcc" stroke-width="1.2"/>
-            <circle cx="22" cy="27" r="7" fill="#19856b"/>
-            <text x="38" y="23" font-family="'Segoe UI', Arial, sans-serif" font-size="12" font-weight="700" fill="#202b3c">Rated Section Assignments</text>
-            <text x="38" y="41" font-family="'Segoe UI', Arial, sans-serif" font-size="11.5" font-weight="700" fill="#19856b">${ratedPct.toFixed(1)}% · ${ratedCount} section assignments</text>
-          </g>
-
-          <!-- Pending Legend Card -->
-          <g class="chart-mark" data-coverage-slice="pending" tabindex="0" role="button" style="cursor:pointer" aria-label="View pending section assignments">
-            <rect x="0" y="66" width="255" height="66" rx="8" fill="#fffaf0" stroke="#e8d9bd" stroke-width="1.2"/>
-            <circle cx="22" cy="98" r="7" fill="#a76a13"/>
-            <text x="38" y="89" font-family="'Segoe UI', Arial, sans-serif" font-size="12" font-weight="700" fill="#202b3c">Pending Section Assignments</text>
-            <text x="38" y="107" font-family="'Segoe UI', Arial, sans-serif" font-size="11.5" font-weight="700" fill="#a76a13">${unratedPct.toFixed(1)}% · ${unratedCount} pending assignments</text>
-            <text x="38" y="122" font-family="'Segoe UI', Arial, sans-serif" font-size="10" font-weight="600" fill="#8d5d12">${unratedCount > 0 ? `Click to view ${unratedCount} pending assignments →` : "All evaluations completed"}</text>
-          </g>
+        <text x="${cx}" y="${cy + 5}" text-anchor="middle" font-family="'Segoe UI', Arial, sans-serif" font-size="22" font-weight="800" fill="#202b3c">${ratedPct.toFixed(1)}%</text>
+        <text x="${cx}" y="${cy + 23}" text-anchor="middle" font-family="'Segoe UI', Arial, sans-serif" font-size="10" fill="#536176">${ratedCount} / ${totalCount} Sections</text>
+        <g transform="translate(150, 32)">
+          ${coverageStatus}
+          <text x="0" y="59" font-family="'Segoe UI', Arial, sans-serif" font-size="12" font-weight="700" fill="#202b3c">Sections with Ratings</text>
+          <text x="0" y="78" font-family="'Segoe UI', Arial, sans-serif" font-size="11" font-weight="700" fill="#19856b">${ratedPct.toFixed(1)}% · ${ratedCount} sections rated</text>
         </g>
+        ${trackMarkup}
       </svg>`;
 
       $("seteCoverageChart").innerHTML = svg;
