@@ -1569,12 +1569,10 @@
       "panel-risk-predictor": {
         kicker: "MODEL HELP",
         title: "Academic Difficulty Risk Predictor",
-        description: `Purpose & how it helps: It gives the Program Chair an early-warning estimate to help prioritize advising, tutoring, or follow-up before difficulties grow.
-What it predicts: The chance that the current student/section scenario may need academic support. It does not predict a student's final grade or make a decision about an individual.
-How it predicts: It combines midterm grade average, attendance, missing or late portal submissions, section capacity, and SETE response engagement. The local model scales and weights those inputs, adds them to a baseline logit, then uses a sigmoid to convert the result to a probability. Lower grades, attendance, or engagement, more missing tasks, and capacity above 95% raise the estimate.
-Reading the result: 45.4% is the estimate for the current slider values; it falls in Moderate Risk, so review the listed drivers and consider support. The −0.19 logit is the raw weighted score before the sigmoid, not a negative probability. Changing any slider recalculates the estimate.
-Risk bands: Below 35% is Low, 35%–64% is Moderate, and 65% or higher is High.
-Responsible use: Coefficients and presets are illustrative. Verify records and use human judgment. SETE engagement may guide instructional support only; never use it for faculty or personnel evaluation.`
+        description: `• What it does: Estimates the likelihood that students in a section need early academic support (such as advising or peer tutoring) before final grades are locked in.
+• What it looks at: Midterm grade average, class attendance, missing portal submissions, section class size, and SETE participation rate.
+• How to read the score: Below 35% is Low (on track), 35%–64% is Moderate (early warning), and 65% or higher is High (priority intervention).
+• Responsible use: Acts as an early-warning guide, not a final grade prediction. SETE engagement is used strictly for student/instructional support and never to evaluate faculty.`
       }
     };
     const ONBOARDING_TOUR_STEPS = [
