@@ -529,7 +529,7 @@
       transition: opacity .16s ease;
     }
     .tour-popover-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
-    .tour-kicker { color: #9b1631; font-size: 10px; font-weight: 800; letter-spacing: .1em; text-transform: uppercase; }
+    .tour-kicker { color: #9b1631; font-size: 10px; font-weight: 800; letter-spacing: .04em; }
     .tour-skip { padding: 3px 0; border: 0; background: transparent; color: #64748b; cursor: pointer; font: inherit; font-size: 11px; font-weight: 650; }
     .tour-popover h2 { margin: 14px 0 6px; color: #334155; font-size: 18px; }
     .tour-description { margin: 0; color: #64748b; font-size: 12px; line-height: 1.65; }
@@ -991,10 +991,12 @@
     <div class="tour-shade" data-tour-shade="bottom"></div>
     <div class="tour-shade" data-tour-shade="left"></div>
     <div class="tour-shade" data-tour-shade="right"></div>
+    <div id="tourInnerShades" aria-hidden="true"></div>
     <div class="tour-spotlight-frame" id="tourSpotlightFrame" aria-hidden="true"></div>
+    <div id="tourSpotlightExtras" aria-hidden="true"></div>
     <section class="tour-popover" id="tourPopover" role="dialog" aria-modal="true" aria-labelledby="tourStepTitle" aria-describedby="tourStepDescription" tabindex="-1">
       <div class="tour-popover-head">
-        <span class="tour-kicker">Program Chair Guide</span>
+        <span class="tour-kicker" id="tourStepKicker"></span>
         <button class="tour-skip" id="tourSkip" type="button">Skip tour</button>
       </div>
       <h2 id="tourStepTitle"></h2>
@@ -1003,7 +1005,7 @@
         <span id="tourStepCounter" aria-live="polite"></span>
         <span>Dashboard onboarding</span>
       </div>
-      <div class="tour-progress-track" role="progressbar" id="tourProgress" aria-label="Tour progress" aria-valuemin="1" aria-valuemax="6" aria-valuenow="1">
+      <div class="tour-progress-track" role="progressbar" id="tourProgress" aria-label="Tour progress" aria-valuemin="1" aria-valuemax="9" aria-valuenow="1">
         <div class="tour-progress-fill" id="tourProgressFill"></div>
       </div>
       <div class="tour-controls">
@@ -1027,38 +1029,68 @@
     const DASHBOARD_TOUR_STORAGE_KEY = "spartanInsight360.dashboardTour.v1";
     const dashboardTourSteps = [
       {
-        target: ".part3-kpi-grid",
-        mobileTarget: ".part3-kpi",
-        title: "Dashboard Overview",
-        description: "These five KPI cards summarize capacity, dropout rate, passing rate, SETE response, and the composite teaching-effectiveness score."
-      },
-      {
-        target: ".sidebar nav",
-        mobileTarget: ".sidebar nav .nav-link[href=\"#passing-by-section\"]",
-        title: "Navigation Sidebar",
-        description: "Use these links to jump to passing-rate, SETE response, SETE coverage, follow-up, and semester-trend sections. The BatStateU logo returns to the dashboard overview."
+        target: ".intro-row",
+        kicker: "Step 1 of 9 • Program Chair View",
+        title: "Program Chair Decision-Support Workspace",
+        description: "This means that the CICS Program Chair can view Student & Faculty Portal records alongside SETE teaching evaluations in one unified workspace instead of checking separate systems."
       },
       {
         target: ".filters",
-        mobileTarget: ".filters .filter-group:first-child",
-        title: "Filters and Controls",
-        description: "Choose a year level, academic year, semester, track, and subject to filter the section charts and snapshot. Use Reset Filters to restore the default view."
+        mobileTarget: ".filters",
+        kicker: "Step 2 of 9 • Granular Filtering",
+        title: "Academic Year, Semester, Year Level & Subject Filters",
+        description: "This means that the Program Chair can narrow down all metrics by Academic Year, Semester, Year Level (1st–4th Year), or specific CICS subjects, and every card and chart updates automatically."
       },
       {
-        target: "#passing-by-section .panel-head",
-        title: "Analytics and Charts",
-        description: "Passing-rate and SETE response charts compare section outcomes and participation against their targets. SETE coverage and semester trends are in the following charts; all respond to the filters."
+        target: '.part3-kpi[data-kpi-card="late"]',
+        kicker: "Step 3 of 9 • Operational KPI 1",
+        title: "Section Capacity Utilization",
+        description: "This means that the Program Chair can immediately see when a CICS section reaches 100% capacity with waitlisted students, signaling when to open additional enrollment slots."
       },
       {
-        target: "#notificationToggle",
-        title: "Notifications and Immediate Follow-up",
-        description: "The bell shows unread alerts for low SETE response and overdue grade submissions. Open an alert for details and a recommended action; use See all for the full list. The Immediate Follow-up section provides a ranked review."
+        target: '.part3-kpi[data-kpi-card="coverage"]',
+        kicker: "Step 4 of 9 • Operational KPI 2",
+        title: "CICS Semester Dropout Rate",
+        description: "This means that the department can track how many CICS students dropped out versus remained enrolled during the current semester, making it easier to spot which year level needs early advising."
       },
       {
-        target: ".sidebar .offline-note",
-        mobileTarget: ".governance-footer",
-        title: "Privacy and Access Control",
-        description: "This prototype presents anonymized SETE aggregates for the Program Chair. Qualitative student comments should only be shown when a section has at least five responses."
+        target: '.part3-kpi[data-kpi-card="passing"]',
+        kicker: "Step 5 of 9 • Academic KPI 3",
+        title: "Student Passing Rate per Section",
+        description: "This means that the academic pass rate of each section is measured independently from SETE evaluation turnout, preventing student grade outcomes from being confused with survey participation."
+      },
+      {
+        targets: [
+          '.part3-kpi[data-kpi-card="facultyScore"]',
+          '.part3-kpi[data-kpi-card="response"]'
+        ],
+        mobileTargets: [
+          '.part3-kpi[data-kpi-card="facultyScore"]',
+          '.part3-kpi[data-kpi-card="response"]'
+        ],
+        kicker: "Step 6 of 9 • Teaching Effectiveness KPIs 4 & 5",
+        title: "SETE Composite Score & SETE Response Rate",
+        description: "This means that the Program Chair evaluates faculty teaching scores alongside section-level SETE response rates, ensuring low-turnout sections are flagged before drawing conclusions."
+      },
+      {
+        target: 'section[aria-labelledby="insightsTitle"]',
+        kicker: "Step 7 of 9 • Automated Decision Support",
+        title: "Key Insights & Recommended Actions",
+        description: "This means that the dashboard automatically highlights top priorities—such as full sections needing extra slots, year levels with rising dropouts, and sections with low SETE turnout—so no critical issue is missed."
+      },
+      {
+        target: ".viz-grid",
+        mobileTarget: ".viz-grid",
+        kicker: "Step 8 of 9 • Visual Analytics",
+        title: "Interactive Charts & Section Breakdowns",
+        description: "This means that the user can compare section passing rates, SETE response rates, and multi-semester trends visually, and click on any data point or section row to inspect detailed records."
+      },
+      {
+        target: ".notification-anchor",
+        mobileTarget: ".notification-anchor",
+        kicker: "Step 9 of 9 • Threshold Alerts & Privacy",
+        title: "Proactive Alerts & Data Governance",
+        description: "This means that the system automatically warns the Program Chair whenever capacity, dropout, or SETE thresholds are breached while keeping confidential student and faculty records protected."
       }
     ];
     const termKeys = [
@@ -1850,15 +1882,50 @@
     }
 
     let dashboardTourIndex = 0;
-    let dashboardTourTarget = null;
+    let dashboardTourTargets = [];
+    function visibleDashboardTourTargets(step) {
+      const isMobile = matchMedia("(max-width: 650px)").matches;
+      const selectors = isMobile && step.mobileTargets
+        ? step.mobileTargets
+        : isMobile && step.mobileTarget
+          ? [step.mobileTarget]
+          : step.targets || [step.target];
+      return selectors.flatMap((selector) => [...document.querySelectorAll(selector)])
+        .filter((element) => {
+          const style = getComputedStyle(element);
+          return element.getClientRects().length > 0 &&
+            style.display !== "none" &&
+            style.visibility !== "hidden" &&
+            style.opacity !== "0";
+        });
+    }
+
+    function dashboardTourBounds() {
+      const rects = dashboardTourTargets.map((element) => element.getBoundingClientRect());
+      const left = Math.min(...rects.map((rect) => rect.left));
+      const top = Math.min(...rects.map((rect) => rect.top));
+      const right = Math.max(...rects.map((rect) => rect.right));
+      const bottom = Math.max(...rects.map((rect) => rect.bottom));
+      return { left, top, right, bottom, width: right - left, height: bottom - top };
+    }
+
     function positionDashboardTour() {
-      if ($("dashboardTour").hidden || !dashboardTourTarget) return;
-      const rect = dashboardTourTarget.getBoundingClientRect();
+      if ($("dashboardTour").hidden || !dashboardTourTargets.length) return;
+      const rect = dashboardTourBounds();
       const padding = 7;
-      const left = Math.max(0, rect.left - padding);
-      const top = Math.max(0, rect.top - padding);
-      const right = Math.min(window.innerWidth, rect.right + padding);
-      const bottom = Math.min(window.innerHeight, rect.bottom + padding);
+      const targetRects = dashboardTourTargets.map((element) => {
+        const target = element.getBoundingClientRect();
+        return {
+          left: target.left - padding,
+          top: target.top - padding,
+          right: target.right + padding,
+          bottom: target.bottom + padding
+        };
+      });
+      const left = Math.min(window.innerWidth, Math.max(0, Math.min(...targetRects.map((target) => target.left))));
+      const top = Math.min(window.innerHeight, Math.max(0, Math.min(...targetRects.map((target) => target.top))));
+      const right = Math.max(left, Math.min(window.innerWidth, Math.max(...targetRects.map((target) => target.right))));
+      const bottom = Math.max(top, Math.min(window.innerHeight, Math.max(...targetRects.map((target) => target.bottom))));
       const viewportWidth = window.innerWidth;
       const viewportHeight = window.innerHeight;
       const setShade = (direction, x, y, width, height) => {
@@ -1873,12 +1940,65 @@
       setShade("left", 0, top, left, bottom - top);
       setShade("right", right, top, viewportWidth - right, bottom - top);
 
+      const innerShades = $("tourInnerShades");
+      innerShades.replaceChildren();
+      const xCoordinates = [...new Set([
+        left,
+        right,
+        ...targetRects.flatMap((target) => [
+          Math.max(left, Math.min(right, target.left)),
+          Math.max(left, Math.min(right, target.right))
+        ])
+      ])].sort((first, second) => first - second);
+      const yCoordinates = [...new Set([
+        top,
+        bottom,
+        ...targetRects.flatMap((target) => [
+          Math.max(top, Math.min(bottom, target.top)),
+          Math.max(top, Math.min(bottom, target.bottom))
+        ])
+      ])].sort((first, second) => first - second);
+      for (let xIndex = 0; xIndex < xCoordinates.length - 1; xIndex += 1) {
+        for (let yIndex = 0; yIndex < yCoordinates.length - 1; yIndex += 1) {
+          const cell = {
+            left: xCoordinates[xIndex],
+            right: xCoordinates[xIndex + 1],
+            top: yCoordinates[yIndex],
+            bottom: yCoordinates[yIndex + 1]
+          };
+          const centerX = (cell.left + cell.right) / 2;
+          const centerY = (cell.top + cell.bottom) / 2;
+          if (targetRects.some((target) =>
+            centerX >= target.left && centerX <= target.right &&
+            centerY >= target.top && centerY <= target.bottom
+          )) continue;
+          const shade = document.createElement("div");
+          shade.className = "tour-shade";
+          shade.style.left = `${cell.left}px`;
+          shade.style.top = `${cell.top}px`;
+          shade.style.width = `${cell.right - cell.left}px`;
+          shade.style.height = `${cell.bottom - cell.top}px`;
+          innerShades.append(shade);
+        }
+      }
+
       const frame = $("tourSpotlightFrame");
-      frame.style.left = `${left}px`;
-      frame.style.top = `${top}px`;
-      frame.style.width = `${right - left}px`;
-      frame.style.height = `${bottom - top}px`;
-      frame.style.borderRadius = getComputedStyle(dashboardTourTarget).borderRadius || "10px";
+      const setFrame = (element, target, targetElement) => {
+        element.style.left = `${Math.max(0, target.left)}px`;
+        element.style.top = `${Math.max(0, target.top)}px`;
+        element.style.width = `${Math.max(0, Math.min(window.innerWidth, target.right) - Math.max(0, target.left))}px`;
+        element.style.height = `${Math.max(0, Math.min(window.innerHeight, target.bottom) - Math.max(0, target.top))}px`;
+        element.style.borderRadius = getComputedStyle(targetElement).borderRadius || "10px";
+      };
+      setFrame(frame, targetRects[0], dashboardTourTargets[0]);
+      const extraFrames = $("tourSpotlightExtras");
+      extraFrames.replaceChildren();
+      targetRects.slice(1).forEach((target, index) => {
+        const extraFrame = document.createElement("div");
+        extraFrame.className = "tour-spotlight-frame";
+        setFrame(extraFrame, target, dashboardTourTargets[index + 1]);
+        extraFrames.append(extraFrame);
+      });
 
       const popover = $("tourPopover");
       const gap = 16;
@@ -1913,28 +2033,57 @@
     }
 
     function showDashboardTourStep(index) {
-      dashboardTourIndex = Math.max(0, Math.min(index, dashboardTourSteps.length - 1));
+      const direction = index < dashboardTourIndex ? -1 : 1;
+      let candidateIndex = Math.max(0, Math.min(index, dashboardTourSteps.length - 1));
+      let candidateTargets = [];
+      while (candidateIndex >= 0 && candidateIndex < dashboardTourSteps.length) {
+        candidateTargets = visibleDashboardTourTargets(dashboardTourSteps[candidateIndex]);
+        if (candidateTargets.length) break;
+        candidateIndex += direction;
+      }
+      if (!candidateTargets.length) {
+        closeDashboardTour(direction > 0 ? "completed" : "skipped");
+        return;
+      }
+      dashboardTourIndex = candidateIndex;
       const step = dashboardTourSteps[dashboardTourIndex];
-      const targetSelector = matchMedia("(max-width: 650px)").matches && step.mobileTarget
-        ? step.mobileTarget
-        : step.target;
-      dashboardTourTarget = document.querySelector(targetSelector);
-      if (!dashboardTourTarget) throw new Error(`Dashboard tour target not found: ${targetSelector}`);
+      dashboardTourTargets = candidateTargets;
+      $("tourStepKicker").textContent = step.kicker;
       $("tourStepTitle").textContent = step.title;
       $("tourStepDescription").textContent = step.description;
       $("tourStepCounter").textContent = `Step ${dashboardTourIndex + 1} of ${dashboardTourSteps.length}`;
       $("tourProgress").setAttribute("aria-valuenow", String(dashboardTourIndex + 1));
+      $("tourProgress").setAttribute("aria-valuemax", String(dashboardTourSteps.length));
       $("tourProgressFill").style.width = `${(dashboardTourIndex + 1) / dashboardTourSteps.length * 100}%`;
-      $("tourBack").disabled = dashboardTourIndex === 0;
-      $("tourNext").textContent = dashboardTourIndex === dashboardTourSteps.length - 1 ? "Finish" : "Next";
-      const originalScrollBehavior = document.documentElement.style.scrollBehavior;
-      document.documentElement.style.scrollBehavior = "auto";
-      dashboardTourTarget.scrollIntoView({ behavior: "auto", block: "center", inline: "nearest" });
-      document.documentElement.style.scrollBehavior = originalScrollBehavior;
+      $("tourBack").disabled = !visibleTourStepExists(dashboardTourIndex - 1, -1);
+      $("tourNext").textContent = visibleTourStepExists(dashboardTourIndex + 1, 1) ? "Next" : "Finish";
+      const targetBounds = dashboardTourBounds();
+      window.scrollTo({
+        top: Math.max(0, window.scrollY + targetBounds.top + targetBounds.height / 2 - window.innerHeight / 2),
+        behavior: "smooth"
+      });
       positionDashboardTour();
       requestAnimationFrame(positionDashboardTour);
       window.setTimeout(positionDashboardTour, 280);
       $("tourNext").focus({ preventScroll: true });
+    }
+
+    function visibleTourStepExists(startIndex, direction) {
+      for (let index = startIndex; index >= 0 && index < dashboardTourSteps.length; index += direction) {
+        if (visibleDashboardTourTargets(dashboardTourSteps[index]).length) return true;
+      }
+      return false;
+    }
+
+    function refreshDashboardTourTarget() {
+      if ($("dashboardTour").hidden) return;
+      const targets = visibleDashboardTourTargets(dashboardTourSteps[dashboardTourIndex]);
+      if (!targets.length) {
+        showDashboardTourStep(dashboardTourIndex);
+        return;
+      }
+      dashboardTourTargets = targets;
+      positionDashboardTour();
     }
 
     function closeDashboardTour(result) {
@@ -1942,19 +2091,20 @@
       $("dashboardTour").setAttribute("aria-hidden", "true");
       $("dashboardView").inert = false;
       window.removeEventListener("scroll", positionDashboardTour, true);
-      window.removeEventListener("resize", positionDashboardTour);
+      window.removeEventListener("resize", refreshDashboardTourTarget);
       localStorage.setItem(DASHBOARD_TOUR_STORAGE_KEY, result);
-      dashboardTourTarget = null;
+      dashboardTourTargets = [];
       $("takeTourButton").focus({ preventScroll: true });
     }
 
     function startDashboardTour() {
       if ($("dashboardView").hidden) transitionToView("dashboard");
+      dashboardTourIndex = 0;
       $("dashboardTour").hidden = false;
       $("dashboardTour").setAttribute("aria-hidden", "false");
       $("dashboardView").inert = true;
       window.addEventListener("scroll", positionDashboardTour, true);
-      window.addEventListener("resize", positionDashboardTour);
+      window.addEventListener("resize", refreshDashboardTourTarget);
       showDashboardTourStep(0);
     }
 
@@ -2623,7 +2773,7 @@
       } else if (event.key === "ArrowRight") {
         event.preventDefault();
         advanceDashboardTour();
-      } else if (event.key === "ArrowLeft" && dashboardTourIndex > 0) {
+      } else if (event.key === "ArrowLeft" && !$("tourBack").disabled) {
         event.preventDefault();
         showDashboardTourStep(dashboardTourIndex - 1);
       } else if (event.key === "Tab") {
