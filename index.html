@@ -11,10 +11,14 @@
       --slate-700: #475569;
       --slate-600: #64748b;
       --maroon: #a51634;
+      --maroon-soft: #fff0f2;
       --gold: #ffe7eb;
       --ink: #334155;
+      --ink-2: #475569;
+      --ink-3: #64748b;
       --muted: #64748b;
       --line: #e5eaf0;
+      --line-strong: #cbd5e1;
       --paper: #fff;
       --canvas: #f4f6f9;
       --green: #138a5b;
@@ -26,7 +30,8 @@
       --shadow: 0 8px 26px rgb(51 65 85 / 5%);
     }
     @media (prefers-reduced-motion: reduce) {
-      .tour-shade, .tour-spotlight-frame, .tour-popover, .tour-progress-fill { transition: none; }
+      html { scroll-behavior: auto; }
+      .tour-shade, .tour-spotlight-frame, .tour-popover { transition: none; }
     }
 
     * { box-sizing: border-box; }
@@ -105,9 +110,6 @@
     .page-title { margin: 0; color: var(--slate-700); font-size: 19px; font-weight: 750; }
     .page-subtitle { margin-top: 2px; color: var(--muted); font-size: 12px; }
     .top-actions { display: flex; align-items: center; gap: 10px; }
-    .tour-help-button { white-space: nowrap; }
-    .help-action { display: grid; justify-items: end; gap: 2px; }
-    .help-hint { color: #64748b; font-size: 9px; white-space: nowrap; }
     .notification-anchor { position: relative; }
     .notification-toggle {
       position: relative;
@@ -200,6 +202,30 @@
     .button:hover { border-color: #bcc7d5; background: #fafbfd; }
     .button-primary { border-color: var(--maroon); background: var(--maroon); color: #fff; }
     .button-primary:hover { border-color: #69091e; background: #69091e; color: #fff; }
+    .topbar-tour-trigger {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      min-height: 36px;
+      padding: 5px 13px 5px 7px;
+      border: 1px solid var(--line-strong);
+      border-radius: 999px;
+      background: #fff;
+      color: var(--ink-2);
+      white-space: nowrap;
+    }
+    .topbar-tour-trigger:hover { border-color: #d7a4af; background: #fffafb; color: var(--maroon); }
+    .topbar-tour-icon {
+      display: grid;
+      width: 23px;
+      height: 23px;
+      place-items: center;
+      border-radius: 50%;
+      background: #f1f5f9;
+      color: var(--maroon);
+      font-size: 12px;
+      font-weight: 800;
+    }
     .content { width: min(1440px, 100%); margin: 0 auto; padding: 27px 34px 40px; }
     .intro-row { display: flex; align-items: end; justify-content: space-between; gap: 18px; margin-bottom: 20px; }
     .eyebrow { margin-bottom: 5px; color: var(--maroon); font-size: 10px; font-weight: 800; letter-spacing: .12em; text-transform: uppercase; }
@@ -253,6 +279,30 @@
     .panel, .grid-2 > *, .grid-equal > * { min-width: 0; }
     .kpi-card { min-height: 172px; overflow: hidden; padding: 14px 16px; border-top: 3px solid var(--kpi-color, var(--maroon)); }
     .kpi-top { display: flex; align-items: center; gap: 6px; }
+    .contextual-help-btn {
+      display: inline-grid;
+      width: 25px;
+      height: 25px;
+      flex: 0 0 auto;
+      place-items: center;
+      margin-left: auto;
+      padding: 0;
+      border: 1px solid var(--line-strong);
+      border-radius: 50%;
+      background: var(--paper);
+      color: var(--ink-3);
+      cursor: pointer;
+      font-size: 12px;
+      font-weight: 750;
+      line-height: 1;
+    }
+    .contextual-help-btn:hover, .contextual-help-btn:focus-visible {
+      border-color: var(--maroon);
+      background: var(--maroon-soft);
+      color: var(--maroon);
+    }
+    .contextual-help-btn:focus-visible { outline: 2px solid var(--maroon); outline-offset: 2px; }
+    .panel-head > .contextual-help-btn { margin-left: 0; }
     .kpi-label { display: block; min-height: 28px; margin-top: 8px; color: #536176; font-size: 10px; font-weight: 600; }
     .kpi-icon { display: grid; width: 29px; height: 29px; place-items: center; border-radius: 8px; background: var(--icon-bg, #f3edf0); color: var(--kpi-color, var(--maroon)); font-size: 13px; font-weight: 800; }
     .kpi-value { margin-top: 8px; color: #334155; font-size: 27px; font-weight: 780; letter-spacing: -.03em; line-height: 1; }
@@ -278,6 +328,15 @@
     .grid-2 { display: grid; grid-template-columns: minmax(0, 1.15fr) minmax(320px, .85fr); gap: 16px; margin-bottom: 16px; }
     .grid-equal { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; margin-bottom: 16px; }
     .panel-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 14px; padding: 17px 19px 13px; }
+    .kpi-jump-target { scroll-margin-top: 90px; }
+    .panel-jump-highlight { animation: panel-jump-highlight 1.5s ease-out both; }
+    @keyframes panel-jump-highlight {
+      0%, 22% { border-color: var(--maroon); box-shadow: 0 0 0 4px rgb(165 22 52 / 20%), var(--shadow); }
+      100% { border-color: var(--line); box-shadow: var(--shadow); }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .panel-jump-highlight { border-color: var(--maroon); box-shadow: 0 0 0 4px rgb(165 22 52 / 20%); animation: none; }
+    }
     .panel-title { margin: 0; color: var(--slate-700); font-size: 13px; font-weight: 750; }
     .panel-description { margin-top: 4px; color: var(--muted); font-size: 10px; }
     .panel-body { padding: 0 19px 18px; }
@@ -397,6 +456,12 @@
       .risk-ring { width: 92px; height: 92px; }
       .risk-ring::before { width: 68px; height: 68px; }
       .panel-head { flex-direction: column; padding: 15px 14px 11px; }
+      .section-directory-head { align-items: stretch; }
+      .section-directory-tools, .section-directory-search { width: 100%; }
+      .section-directory-search { flex: 1; }
+      .section-directory-alert { margin: 0 14px 14px; align-items: flex-start; }
+      .section-directory-table-wrap { padding: 0 14px; }
+      .section-directory-note { margin-right: 14px !important; margin-left: 14px !important; }
       .panel-body { padding-right: 14px; padding-left: 14px; }
       .grade-row { grid-template-columns: 100px minmax(0, 1fr) 38px; gap: 7px; }
       .risk-tools { width: 100%; }
@@ -407,7 +472,7 @@
       .module-kpi { grid-template-columns: 1fr; gap: 7px; }
     }
     @media print {
-      .sidebar, .filters, .button, .risk-tools, .notification-anchor, .notification-dialog, .dashboard-tour { display: none !important; }
+      .sidebar, .filters, .button, .contextual-help-btn, .topbar-tour-trigger, .onboarding-tour, .risk-tools, .notification-anchor, .notification-dialog, .dashboard-tour { display: none !important; }
       .main { margin: 0; }
       .topbar { position: static; border: 0; }
       .content { width: 100%; padding: 12px; }
@@ -430,10 +495,99 @@
     .filter-note { max-width: 480px; line-height: 1.5; }
     .subject-filter { flex: 1 1 230px; }
     .subject-filter .filter-control { width: 100%; }
-    .insight-list { display: grid; gap: 9px; margin: 0 0 16px; padding-left: 18px; color: #536176; font-size: 11px; line-height: 1.55; }
-    .insight-list strong { color: var(--slate-700); }
     .capacity-action { display: inline-block; margin-left: 5px; padding: 2px 6px; border-radius: 999px; background: #fff0f2; color: #9b1631; font-size: 9px; font-weight: 750; }
     .section-snapshot-note { margin: 9px 0 0; color: var(--muted); font-size: 10px; }
+    .section-directory-head { align-items: center; }
+    .section-directory-tools { display: flex; flex: 0 0 auto; align-items: center; gap: 9px; }
+    .section-directory-search {
+      display: flex;
+      width: min(290px, 32vw);
+      height: 36px;
+      align-items: center;
+      gap: 9px;
+      padding: 0 11px;
+      border: 1px solid #dce3eb;
+      border-radius: 11px;
+      background: #fff;
+      color: #8290a4;
+    }
+    .section-directory-search:focus-within { border-color: #9cabbc; box-shadow: 0 0 0 3px rgb(51 65 85 / 7%); }
+    .section-directory-search svg { width: 15px; height: 15px; flex: 0 0 auto; }
+    .section-directory-search input { width: 100%; min-width: 0; padding: 0; border: 0; outline: 0; background: transparent; color: var(--ink); font-size: 11px; }
+    .section-directory-search input::placeholder { color: #8290a4; }
+    .section-directory-tools > .contextual-help-btn { margin-left: 0; }
+    .section-directory-alert { display: flex; align-items: center; gap: 11px; margin: 0 19px 16px; padding: 11px 13px; border: 1px solid #f4d57c; border-radius: 11px; background: #fffaf0; color: #80500f; font-size: 11px; line-height: 1.5; }
+    .section-directory-alert-icon { display: grid; width: 19px; height: 19px; flex: 0 0 auto; place-items: center; border: 1px solid #df8c08; border-radius: 50%; color: #b66a00; font-size: 12px; font-weight: 800; }
+    .section-directory-alert strong { color: #7c3600; }
+    .section-directory-table-wrap { padding: 0 19px; }
+    .section-directory-table { min-width: 740px; }
+    .section-directory-table th { padding: 11px 13px; background: #f8fafc; color: #52657f; }
+    .section-directory-table td { padding: 11px 13px; }
+    .section-directory-table tbody tr[data-section-id] { cursor: pointer; }
+    .section-directory-table tbody tr[data-section-id]:focus-visible { outline: 2px solid var(--maroon); outline-offset: -2px; }
+    .section-directory-section { color: #202b3c; font-weight: 700; }
+    .section-directory-meta { color: #8090a5; font-weight: 400; }
+    .section-directory-pill { display: inline-flex; padding: 3px 9px; border-radius: 99px; background: #f1f5f9; color: #334155; font-size: 10px; }
+    .section-directory-capacity { display: flex; min-width: 235px; align-items: center; gap: 12px; }
+    .section-capacity-meter { display: block; width: 96px; height: 8px; flex: 0 0 auto; overflow: hidden; border-radius: 99px; background: #edf2f7; }
+    .section-capacity-meter-fill { display: block; height: 100%; border-radius: inherit; }
+    .section-capacity-slots { color: #8090a5; font-size: 10px; }
+    .section-dropout-count { color: #202b3c; font-weight: 700; text-align: center; }
+    .section-dropout-count.is-elevated { color: #e11d48; }
+    .section-directory-empty { padding: 24px 12px; color: var(--muted); text-align: center; }
+    .risk-predictor-panel { margin-bottom: 16px; }
+    .risk-panel-heading { display: flex; width: 100%; align-items: flex-start; justify-content: space-between; gap: 16px; }
+    .risk-panel-heading .contextual-help-btn { margin-left: 0; }
+    .risk-panel-subtitle { margin-top: 4px; color: var(--muted); font-size: 10px; }
+    .risk-predictor-grid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 18px; padding: 0 19px 19px; }
+    .risk-simulator-column, .risk-output-column { min-width: 0; }
+    .risk-tool-section { padding: 16px; border: 1px solid var(--line); border-radius: 11px; background: #fff; }
+    .risk-section-title { margin: 0; color: var(--slate-700); font-size: 12px; font-weight: 750; }
+    .risk-section-copy { margin: 4px 0 0; color: var(--muted); font-size: 10px; }
+    .risk-preset-buttons { display: flex; flex-wrap: wrap; gap: 7px; margin: 13px 0 17px; }
+    .risk-preset-button { padding: 7px 10px; border: 1px solid #e1e7ee; border-radius: 8px; background: #fff; color: #536176; cursor: pointer; font-size: 10px; font-weight: 650; text-align: left; }
+    .risk-preset-button:hover, .risk-preset-button:focus-visible { border-color: #d7a4af; background: #fffafb; color: var(--maroon); }
+    .risk-input-list { display: grid; gap: 15px; }
+    .risk-input-label { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; color: #536176; font-size: 10px; font-weight: 650; }
+    .risk-input-row output { flex: 0 0 auto; color: var(--ink); font-variant-numeric: tabular-nums; font-size: 11px; font-weight: 750; }
+    .risk-range { display: block; width: 100%; height: 6px; margin: 9px 0 5px; accent-color: var(--maroon); cursor: pointer; }
+    .risk-range-scale { display: flex; justify-content: space-between; color: #94a0b0; font-size: 9px; }
+    .risk-result-card { padding: 15px; border: 1px solid #e6eaf0; border-radius: 11px; background: #fbfcfd; }
+    .risk-score-row { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+    .risk-result-label, .risk-model-label { color: var(--muted); font-size: 9px; font-weight: 800; letter-spacing: .06em; text-transform: uppercase; }
+    .risk-probability { margin-top: 2px; color: var(--slate-700); font-size: 34px; font-variant-numeric: tabular-nums; font-weight: 800; letter-spacing: -.04em; line-height: 1.15; }
+    .risk-status-badge { flex: 0 0 auto; white-space: normal; text-align: center; }
+    .risk-logit { margin-top: 3px; color: #8a95a5; font-size: 9px; font-variant-numeric: tabular-nums; }
+    .risk-action-card { margin-top: 14px; padding: 12px; border-left: 3px solid var(--maroon); border-radius: 7px; background: #fff; }
+    .risk-action-card p { margin: 5px 0 0; color: #536176; font-size: 11px; line-height: 1.55; }
+    .risk-driver-list { display: grid; gap: 10px; margin-top: 12px; }
+    .risk-driver-row { display: grid; gap: 5px; }
+    .risk-driver-label { display: flex; justify-content: space-between; gap: 10px; color: #536176; font-size: 9px; }
+    .risk-driver-label strong { font-weight: 650; }
+    .risk-driver-value { flex: 0 0 auto; color: #8a95a5; font-variant-numeric: tabular-nums; text-align: right; }
+    .risk-driver-track { height: 6px; overflow: hidden; border-radius: 99px; background: #edf0f4; }
+    .risk-driver-fill { display: block; height: 100%; min-width: 0; border-radius: inherit; background: var(--maroon); transition: width .18s ease; }
+    .risk-driver-row.is-protective .risk-driver-fill { background: var(--green); }
+    @media (prefers-reduced-motion: reduce) { .risk-driver-fill { transition: none; } }
+    .risk-model-summary { margin-top: 14px; padding: 12px 14px; border: 1px solid #e5eaf0; border-radius: 9px; background: #f8fafc; }
+    .risk-model-summary p { margin: 5px 0 0; color: #536176; font-size: 10px; line-height: 1.55; }
+    .risk-model-summary small { display: block; margin-top: 5px; color: #8994a4; font-size: 9px; line-height: 1.45; }
+    .risk-responsible-notice { margin: 0 19px 19px; padding: 11px 13px; border: 1px solid #ead5db; border-radius: 9px; background: #fffafb; color: #763043; font-size: 10px; line-height: 1.55; }
+    .risk-responsible-notice strong { color: #74172c; }
+    @media (max-width: 850px) { .risk-predictor-grid { grid-template-columns: 1fr; } }
+    @media (max-width: 650px) {
+      .risk-predictor-grid { gap: 12px; padding: 0 14px 14px; }
+      .risk-tool-section { padding: 13px; }
+      .risk-preset-buttons { display: grid; }
+      .risk-responsible-notice { margin: 0 14px 14px; }
+      .risk-score-row { align-items: flex-start; flex-direction: column; }
+      .risk-status-badge { text-align: left; }
+    }
+    @media (max-width: 650px) {
+      .section-directory-head { align-items: stretch; }
+      .section-directory-tools { width: 100%; }
+      .section-directory-search { width: auto; flex: 1 1 0; }
+    }
     #resetFilters { flex: 0 0 auto; }
     .alert-strip.is-clear { border-color: #b7dfcc; border-left-color: var(--green); background: #f0faf5; color: #236548; }
     .alert-strip.is-clear strong { color: #17613f; }
@@ -533,14 +687,76 @@
     }
     .tour-popover-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
     .tour-kicker { color: #9b1631; font-size: 10px; font-weight: 800; letter-spacing: .04em; }
-    .tour-skip { padding: 3px 0; border: 0; background: transparent; color: #64748b; cursor: pointer; font: inherit; font-size: 11px; font-weight: 650; }
     .tour-popover h2 { margin: 14px 0 6px; color: #334155; font-size: 18px; }
     .tour-description { margin: 0; color: #64748b; font-size: 12px; line-height: 1.65; }
-    .tour-progress-meta { display: flex; justify-content: space-between; margin-top: 17px; color: #64748b; font-size: 10px; font-weight: 650; }
-    .tour-progress-track { height: 5px; margin-top: 6px; overflow: hidden; border-radius: 99px; background: #edf0f4; }
-    .tour-progress-fill { height: 100%; border-radius: inherit; background: #9b1631; transition: width .24s ease; }
-    .tour-controls { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-top: 16px; }
+    .tour-controls { display: flex; align-items: center; justify-content: flex-end; gap: 8px; margin-top: 16px; }
     .tour-controls .button { min-height: 34px; padding: 7px 11px; }
+    .onboarding-tour[hidden] { display: none; }
+    .onboarding-tour {
+      position: fixed;
+      inset: 0;
+      z-index: 11000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      background: rgb(24 30 38 / 45%);
+    }
+    .onboarding-card {
+      width: min(460px, 100%);
+      max-width: 460px;
+      overflow: hidden;
+      border-radius: 18px;
+      background: var(--paper);
+      box-shadow: 0 24px 72px rgb(15 23 42 / 28%);
+    }
+    .onboarding-card:focus { outline: none; }
+    .onboarding-header {
+      display: grid;
+      grid-template-columns: 42px minmax(0, 1fr) 32px;
+      align-items: start;
+      gap: 13px;
+      padding: 21px 20px;
+      background: var(--maroon);
+      color: #fff;
+    }
+    .onboarding-sparkle {
+      display: grid;
+      width: 42px;
+      height: 42px;
+      place-items: center;
+      border: 1px solid rgb(255 255 255 / 24%);
+      border-radius: 12px;
+      background: rgb(255 255 255 / 14%);
+      color: #fff;
+      font-size: 23px;
+    }
+    .onboarding-step-label { display: block; margin: 1px 0 5px; color: #f4dce1; font-size: 9px; font-weight: 800; letter-spacing: .12em; }
+    .onboarding-title { margin: 0; color: #fff; font-size: 18px; font-weight: 750; line-height: 1.3; }
+    .onboarding-close {
+      display: grid;
+      width: 30px;
+      height: 30px;
+      place-items: center;
+      border: 1px solid rgb(255 255 255 / 28%);
+      border-radius: 9px;
+      background: rgb(255 255 255 / 10%);
+      color: #fff;
+      cursor: pointer;
+      font-size: 22px;
+      line-height: 1;
+    }
+    .onboarding-close:hover { background: rgb(255 255 255 / 20%); }
+    .onboarding-body { padding: 20px 22px 10px; }
+    .onboarding-description { min-height: 72px; margin: 0; color: #475569; font-size: 13px; line-height: 1.65; }
+    .onboarding-progress { display: flex; align-items: center; gap: 7px; margin-top: 21px; }
+    .onboarding-progress-dot { width: 6px; height: 6px; flex: 0 0 auto; border-radius: 999px; background: #d1d5db; transition: width .18s ease, background .18s ease; }
+    .onboarding-progress-dot.is-active { width: 22px; background: var(--maroon); }
+    .onboarding-footer { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 13px 22px 20px; }
+    .onboarding-back { padding: 8px 0; border: 0; background: transparent; color: #64748b; cursor: pointer; font-size: 12px; font-weight: 650; }
+    .onboarding-back:hover { color: var(--maroon); }
+    .onboarding-back[hidden] { visibility: hidden; }
+    .onboarding-next { min-height: 38px; margin-left: auto; padding: 9px 16px; border-radius: 999px; font-size: 12px; }
     @media (max-width: 650px) {
       .tour-shade { background: rgb(15 23 42 / 48%); backdrop-filter: none; }
       .tour-spotlight-frame { border-width: 3px; }
@@ -551,11 +767,9 @@
       }
       .tour-popover h2 { margin-top: 12px; font-size: 18px; }
       .tour-description { font-size: 14px; line-height: 1.5; }
-      .tour-progress-meta { font-size: 11px; }
       .tour-controls .button { min-height: 40px; padding: 8px 12px; }
       .top-actions { gap: 7px; }
     }
-    .tour-controls .button:disabled { opacity: .48; cursor: not-allowed; }
     .detail-modal::backdrop { background: rgb(15 23 42 / 45%); }
     .modal-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 16px; padding: 18px 20px; border-bottom: 1px solid #e8edf2; }
     .modal-head h2 { margin: 0; color: #334155; font-size: 17px; }
@@ -713,6 +927,7 @@
         <a class="nav-link" href="#sete-coverage"><span class="nav-icon">◎</span> SETE rating coverage</a>
         <a class="nav-link" href="#follow-up"><span class="nav-icon">◷</span> Immediate follow-up</a>
         <a class="nav-link" href="#sete-trend"><span class="nav-icon">✉</span> SETE semester trend</a>
+        <a class="nav-link" href="#risk-predictor"><span class="nav-icon">◎</span> Risk Predictor (ML)</a>
       </nav>
       <div class="nav-label">Tracks</div>
       <div class="sidebar-note track-indicators" style="margin-top:0">
@@ -753,10 +968,9 @@
               <div class="notification-list" id="notificationPreview" aria-live="polite"></div>
             </div>
           </div>
-          <div class="help-action">
-            <button class="button tour-help-button" id="takeTourButton" type="button" aria-label="Open dashboard help" title="Open dashboard help">? &nbsp; Help</button>
-            <span class="help-hint">Use Help to learn what each metric and control means.</span>
-          </div>
+          <button class="button topbar-tour-trigger" id="takeTourButton" type="button" aria-label="Take a dashboard tour" aria-controls="onboardingTour" aria-expanded="false">
+            <span class="topbar-tour-icon" aria-hidden="true">?</span> Take a tour
+          </button>
           <button class="button" type="button" onclick="window.print()">Print / Save PDF</button>
         </div>
       </header>
@@ -811,6 +1025,7 @@
             </select>
           </div>
           <div class="filter-note">Status bands: On target meets the threshold; Warning is within 10 percentage points; Critical misses it by more.</div>
+          <button class="contextual-help-btn" type="button" data-contextual-help="filters" aria-label="Help with dashboard filters" title="Explain dashboard filters">?</button>
           <button class="button" type="button" id="resetFilters">Reset Filters</button>
         </section>
 
@@ -818,49 +1033,49 @@
 
         <section class="part3-kpi-grid" aria-label="Five Program Chair key performance indicators">
           <article class="kpi-card part3-kpi" data-kpi-card="late" style="--kpi-color:#9b1631;--icon-bg:#fff0f2">
-            <div class="kpi-top"><span class="kpi-icon" aria-hidden="true">◷</span></div>
+            <div class="kpi-top"><span class="kpi-icon" aria-hidden="true">◷</span><button class="contextual-help-btn" type="button" data-contextual-help="kpi-late" aria-label="Help: Section Capacity Utilization" title="Explain Section Capacity Utilization">?</button></div>
             <div class="kpi-label">Section Capacity Utilization</div>
             <div class="kpi-value" id="kpiLateValue">Calculating…</div>
             <div class="kpi-status" id="kpiLateStatus">Calculating status</div>
             <div class="kpi-target">Target: 85%–95%</div>
             <div class="kpi-count" id="kpiLateCount"></div>
-            <button class="kpi-link" type="button" data-kpi="late">View list <span aria-hidden="true">→</span></button>
+            <button class="kpi-link" type="button" data-kpi="late" data-kpi-target="section-capacity-directory">View list <span aria-hidden="true">→</span></button>
           </article>
           <article class="kpi-card part3-kpi" data-kpi-card="coverage" style="--kpi-color:#138a5b;--icon-bg:#e7f5ef">
-            <div class="kpi-top"><span class="kpi-icon" aria-hidden="true">◎</span></div>
+            <div class="kpi-top"><span class="kpi-icon" aria-hidden="true">◎</span><button class="contextual-help-btn" type="button" data-contextual-help="kpi-coverage" aria-label="Help: CICS Semester Dropout Rate" title="Explain CICS Semester Dropout Rate">?</button></div>
             <div class="kpi-label">CICS Semester Dropout Rate</div>
             <div class="kpi-value" id="kpiCoverageValue">Calculating…</div>
             <div class="kpi-status" id="kpiCoverageStatus">Calculating status</div>
             <div class="kpi-target">Target: &lt; 5.0%</div>
             <div class="kpi-count" id="kpiCoverageCount"></div>
-            <button class="kpi-link" type="button" data-kpi="coverage">View list <span aria-hidden="true">→</span></button>
+            <button class="kpi-link" type="button" data-kpi="coverage" data-kpi-target="section-capacity-directory">View list <span aria-hidden="true">→</span></button>
           </article>
           <article class="kpi-card part3-kpi" data-kpi-card="passing" style="--kpi-color:#138a5b;--icon-bg:#e7f5ef">
-            <div class="kpi-top"><span class="kpi-icon" aria-hidden="true">✓</span></div>
+            <div class="kpi-top"><span class="kpi-icon" aria-hidden="true">✓</span><button class="contextual-help-btn" type="button" data-contextual-help="kpi-passing" aria-label="Help: Student Passing Rate per Section" title="Explain Student Passing Rate per Section">?</button></div>
             <div class="kpi-label">Student Passing Rate per Section</div>
             <div class="kpi-value" id="kpiPassingValue">Calculating…</div>
             <div class="kpi-status" id="kpiPassingStatus">Calculating status</div>
             <div class="kpi-target">Target: &gt; 80%</div>
             <div class="kpi-count" id="kpiPassingCount"></div>
-            <button class="kpi-link" type="button" data-kpi="passing">View list <span aria-hidden="true">→</span></button>
+            <button class="kpi-link" type="button" data-kpi="passing" data-kpi-target="passing-by-section">View chart <span aria-hidden="true">→</span></button>
           </article>
           <article class="kpi-card part3-kpi" data-kpi-card="facultyScore" style="--kpi-color:#a51634;--icon-bg:#fff0f2">
-            <div class="kpi-top"><span class="kpi-icon" aria-hidden="true">★</span></div>
+            <div class="kpi-top"><span class="kpi-icon" aria-hidden="true">★</span><button class="contextual-help-btn" type="button" data-contextual-help="kpi-facultyScore" aria-label="Help: SETE Composite Score" title="Explain SETE Composite Score">?</button></div>
             <div class="kpi-label">SETE Composite Score</div>
             <div class="kpi-value" id="kpiFacultyScoreValue">Calculating…</div>
             <div class="kpi-status" id="kpiFacultyScoreStatus">Calculating status</div>
             <div class="kpi-target">Target: &gt; 4.0</div>
             <div class="kpi-count" id="kpiFacultyScoreCount"></div>
-            <button class="kpi-link" type="button" data-kpi="facultyScore">View list <span aria-hidden="true">→</span></button>
+            <button class="kpi-link" type="button" data-kpi="facultyScore" data-kpi-target="sete-coverage">View chart <span aria-hidden="true">→</span></button>
           </article>
           <article class="kpi-card part3-kpi" data-kpi-card="response" style="--kpi-color:#a76a13;--icon-bg:#fff5df">
-            <div class="kpi-top"><span class="kpi-icon" aria-hidden="true">✉</span></div>
+            <div class="kpi-top"><span class="kpi-icon" aria-hidden="true">✉</span><button class="contextual-help-btn" type="button" data-contextual-help="kpi-response" aria-label="Help: SETE Response Rate per Section" title="Explain SETE Response Rate per Section">?</button></div>
             <div class="kpi-label">SETE Response Rate per Section</div>
             <div class="kpi-value" id="kpiResponseValue">Calculating…</div>
             <div class="kpi-status" id="kpiResponseStatus">Calculating status</div>
             <div class="kpi-target">Target: &gt; 75%</div>
             <div class="kpi-count" id="kpiResponseCount"></div>
-            <button class="kpi-link" type="button" data-kpi="response">View list <span aria-hidden="true">→</span></button>
+            <button class="kpi-link" type="button" data-kpi="response" data-kpi-target="response-by-section">View chart <span aria-hidden="true">→</span></button>
           </article>
         </section>
 
@@ -868,30 +1083,11 @@
           KPI summaries reflect the Program Chair figures provided for this dashboard. Existing chart records remain illustrative hardcoded samples and are not official institutional data.
         </p>
 
-        <section class="panel" aria-labelledby="insightsTitle">
-          <div class="panel-head">
-            <div><h2 class="panel-title" id="insightsTitle">Key Insights &amp; Recommended Actions for Program Chair</h2></div>
-          </div>
-          <div class="panel-body">
-            <ul class="insight-list">
-              <li><strong>Enrollment Capacity:</strong> CS-105 and IT-201 have reached 100% capacity with 12 waitlisted students. Action: <span class="capacity-action">Open 5 additional slots in Section A</span>.</li>
-              <li><strong>CICS Dropout Tracking:</strong> Current semester dropout rate is 4.2% (18 students). 2nd-Year CICS shows the highest mid-semester attrition (6.1%)—filter by Year Level below to inspect affected sections.</li>
-              <li><strong>Passing Rate vs. SETE Validity:</strong> Section C posted a 91% passing rate but only a 32% SETE response rate; treat evaluation scores for this section with caution.</li>
-            </ul>
-            <div class="table-wrap">
-              <table class="modal-table" aria-label="Section capacity and dropout snapshot by year level">
-                <thead><tr><th>Section</th><th>Year Level</th><th>Capacity / Slots</th><th>Dropouts</th></tr></thead>
-                <tbody id="sectionSnapshotRows"></tbody>
-              </table>
-            </div>
-            <p class="section-snapshot-note">Capacity uses the sample section roster as the slot limit. Section-level dropout counts are illustrative allocations of the reported 18-student total; replace them with verified registrar records when available.</p>
-          </div>
-        </section>
-
         <section class="viz-grid" aria-label="BAT 405 Part III visualizations">
-          <article class="panel viz-panel" id="passing-by-section">
+          <article class="panel viz-panel kpi-jump-target" id="passing-by-section">
             <div class="panel-head">
               <div><h2 class="panel-title">Student Passing Rate per Section</h2><div class="panel-description">Section comparison against the 85% target; click any bar to inspect details.</div><span class="term-tag" id="passingChartTerm"></span></div>
+              <button class="contextual-help-btn" type="button" data-contextual-help="panel-passing" aria-label="Help: Student Passing Rate chart" title="Explain passing-rate chart">?</button>
             </div>
             <div class="panel-body">
               <div class="passing-chart-viewport" id="passingChart" aria-live="polite"></div>
@@ -905,9 +1101,10 @@
             </div>
           </article>
 
-          <article class="panel viz-panel response-panel" id="response-by-section">
+          <article class="panel viz-panel response-panel kpi-jump-target" id="response-by-section">
             <div class="panel-head">
               <div><h2 class="panel-title">SETE Response Rate per Section</h2><div class="panel-description">Lowest response rates appear first; bars compare each section with the 80% target.</div><span class="term-tag" id="responseChartTerm"></span></div>
+              <button class="contextual-help-btn" type="button" data-contextual-help="panel-response" aria-label="Help: SETE Response Rate chart" title="Explain response-rate chart">?</button>
             </div>
             <div class="panel-body">
               <div class="response-chart-viewport" id="seteResponseChart" aria-live="polite"></div>
@@ -921,7 +1118,7 @@
             </div>
           </article>
 
-          <article class="panel viz-panel" id="sete-coverage">
+          <article class="panel viz-panel kpi-jump-target" id="sete-coverage">
             <div class="panel-head">
               <div>
                 <h2 class="panel-title">SETE Rating Coverage</h2>
@@ -929,6 +1126,7 @@
                 <span class="term-tag" id="coverageChartTerm"></span>
               </div>
               <span class="coverage-target-badge">Target<br>95%</span>
+              <button class="contextual-help-btn" type="button" data-contextual-help="panel-coverage" aria-label="Help: SETE Rating Coverage chart" title="Explain rating coverage">?</button>
             </div>
             <div class="panel-body">
               <div class="coverage-chart-viewport" id="seteCoverageChart" aria-live="polite"></div>
@@ -940,6 +1138,7 @@
             <div class="panel-head">
               <div><h2 class="panel-title">Section-Subjects Requiring Immediate Follow-Up</h2><div class="panel-description">Ranked by overdue grade submission, then lowest SETE response rate.</div></div>
               <span class="term-tag" id="followUpCount"></span>
+              <button class="contextual-help-btn" type="button" data-contextual-help="panel-followup" aria-label="Help: Follow-Up list" title="Explain the follow-up list">?</button>
             </div>
             <div class="panel-body">
               <div class="follow-up-list" id="followUpChart" aria-live="polite"></div>
@@ -951,6 +1150,7 @@
             <div class="panel-head">
               <div><h2 class="panel-title">SETE Mean Evaluation Score &amp; Response Rate Across Semesters</h2><div class="panel-description">The trend includes terms up to the selected year and semester; left axis is the mean score (3.0–5.0) and right axis is response rate (60%–100%).</div></div>
               <span class="term-tag" id="trendTrackLabel"></span>
+              <button class="contextual-help-btn" type="button" data-contextual-help="panel-trend" aria-label="Help: SETE trends chart" title="Explain SETE trends">?</button>
             </div>
             <div class="panel-body">
               <div class="trend-viewport" id="seteTrendChart" aria-live="polite"></div>
@@ -961,6 +1161,117 @@
               <div class="chart-footnote">Tracks longitudinal faculty teaching scores (target ≥ 4.20) alongside student participation rates (target ≥ 80%) across the last 4 semesters.</div>
             </div>
           </article>
+        </section>
+
+        <section class="panel risk-predictor-panel kpi-jump-target" id="risk-predictor" aria-labelledby="riskPredictorTitle">
+          <div class="panel-head">
+            <div class="risk-panel-heading">
+              <div>
+                <h2 class="panel-title" id="riskPredictorTitle">Academic Difficulty Risk Predictor</h2>
+                <div class="risk-panel-subtitle">Logistic Regression Model · Student &amp; Section Early-Warning Simulation (Part IV)</div>
+              </div>
+              <button class="contextual-help-btn" type="button" data-contextual-help="panel-risk-predictor" aria-label="Help: Academic Difficulty Risk Predictor" title="Explain the risk model">?</button>
+            </div>
+          </div>
+          <div class="risk-predictor-grid">
+            <section class="risk-tool-section risk-simulator-column" aria-labelledby="riskSimulatorTitle">
+              <h3 class="risk-section-title" id="riskSimulatorTitle">Interactive Simulator</h3>
+              <p class="risk-section-copy">Load an illustrative section profile, then adjust any input to see the estimate update.</p>
+              <div class="risk-preset-buttons" aria-label="Load section presets">
+                <button class="risk-preset-button" type="button" data-risk-preset="3104">Load Section 3104 (High Risk)</button>
+                <button class="risk-preset-button" type="button" data-risk-preset="2102">Load Section 2102 (Moderate)</button>
+                <button class="risk-preset-button" type="button" data-risk-preset="1101">Load Section 1101 (On Track)</button>
+              </div>
+              <div class="risk-input-list">
+                <div class="risk-input-row">
+                  <div class="risk-input-label"><label for="riskMidtermGrade">Midterm Grade Average</label><output id="riskMidtermGradeValue" for="riskMidtermGrade">76%</output></div>
+                  <input class="risk-range" id="riskMidtermGrade" type="range" min="60" max="100" step="1" value="76">
+                  <div class="risk-range-scale"><span>60%</span><span>100%</span></div>
+                </div>
+                <div class="risk-input-row">
+                  <div class="risk-input-label"><label for="riskAttendanceRate">Class Attendance Rate</label><output id="riskAttendanceRateValue" for="riskAttendanceRate">82%</output></div>
+                  <input class="risk-range" id="riskAttendanceRate" type="range" min="50" max="100" step="1" value="82">
+                  <div class="risk-range-scale"><span>50%</span><span>100%</span></div>
+                </div>
+                <div class="risk-input-row">
+                  <div class="risk-input-label"><label for="riskMissingTasks">Missing / Late Portal Submissions</label><output id="riskMissingTasksValue" for="riskMissingTasks">3 tasks</output></div>
+                  <input class="risk-range" id="riskMissingTasks" type="range" min="0" max="10" step="1" value="3">
+                  <div class="risk-range-scale"><span>0 tasks</span><span>10 tasks</span></div>
+                </div>
+                <div class="risk-input-row">
+                  <div class="risk-input-label"><label for="riskCapacityUtilization">Section Capacity Utilization</label><output id="riskCapacityUtilizationValue" for="riskCapacityUtilization">98%</output></div>
+                  <input class="risk-range" id="riskCapacityUtilization" type="range" min="70" max="110" step="1" value="98">
+                  <div class="risk-range-scale"><span>70%</span><span>110%</span></div>
+                </div>
+                <div class="risk-input-row">
+                  <div class="risk-input-label"><label for="riskSeteEngagement">SETE Section Engagement / Response Rate</label><output id="riskSeteEngagementValue" for="riskSeteEngagement">68%</output></div>
+                  <input class="risk-range" id="riskSeteEngagement" type="range" min="40" max="100" step="1" value="68">
+                  <div class="risk-range-scale"><span>40%</span><span>100%</span></div>
+                </div>
+              </div>
+            </section>
+
+            <section class="risk-tool-section risk-output-column" aria-labelledby="riskOutputTitle">
+              <h3 class="risk-section-title" id="riskOutputTitle">Prediction Output</h3>
+              <div class="risk-result-card">
+                <div class="risk-score-row">
+                  <div>
+                    <div class="risk-result-label">Predicted Academic Difficulty Probability</div>
+                    <div class="risk-probability" id="riskProbability">45.4%</div>
+                    <div class="risk-logit" id="riskLogit">Logit score: −0.19</div>
+                  </div>
+                  <span class="badge badge-watch risk-status-badge" id="riskStatusBadge">Moderate Risk (Warning)</span>
+                </div>
+                <div class="risk-action-card">
+                  <div class="risk-result-label">Recommended Program Chair Action</div>
+                  <p id="riskRecommendation">Check in with students, confirm missing work, and monitor attendance at the next progress review.</p>
+                </div>
+              </div>
+              <div class="risk-drivers-section">
+                <h3 class="risk-section-title" style="margin-top:15px">Top Risk Drivers</h3>
+                <p class="risk-section-copy">Positive values increase risk; green bars show protective factors.</p>
+                <div class="risk-driver-list" id="riskDrivers"></div>
+              </div>
+              <div class="risk-model-summary">
+                <div class="risk-model-label">Model Validation Summary</div>
+                <p>Model: Logistic Regression · Training Sample: n = 428 CICS Records · Accuracy: 87.4% · Precision: 84.2% · Recall: 88.9% · ROC-AUC: 0.91</p>
+                <small>Offline case-study metrics. The current slider simulator uses fixed local coefficients and does not retrain or re-evaluate this model.</small>
+              </div>
+            </section>
+          </div>
+          <div class="risk-responsible-notice"><strong>Responsible Use Notice:</strong> SETE engagement metrics are used strictly to identify instructional support needs and student risk factors. Predictions never automate faculty evaluation or personnel decisions.</div>
+        </section>
+
+        <section class="panel section-directory-panel kpi-jump-target" id="section-capacity-directory" aria-labelledby="sectionDirectoryTitle">
+          <div class="panel-head section-directory-head">
+            <div>
+              <h2 class="panel-title" id="sectionDirectoryTitle">Section Capacity &amp; Dropouts Directory</h2>
+              <div class="panel-description">Enrollment utilization, available open slots, and semester dropout counts for sections matching the current filters.</div>
+            </div>
+            <div class="section-directory-tools">
+              <label class="section-directory-search">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true">
+                  <circle cx="10.8" cy="10.8" r="6.8"></circle>
+                  <path d="m16 16 4.5 4.5"></path>
+                </svg>
+                <input id="sectionDirectorySearch" type="search" aria-label="Search section, track, or faculty" placeholder="Search section, track, or faculty...">
+              </label>
+              <button class="contextual-help-btn" type="button" data-contextual-help="panel-directory" aria-label="Help: Section Capacity and Dropouts Directory" title="Explain the section directory">?</button>
+            </div>
+          </div>
+          <div class="section-directory-alert" role="note">
+            <span class="section-directory-alert-icon" aria-hidden="true">i</span>
+            <span><strong>Passing Rate vs. SETE Validity:</strong> Section C posted a 91% passing rate but only a 32% SETE response rate; treat evaluation scores for this section with caution.</span>
+          </div>
+          <div class="section-directory-table-wrap">
+            <div class="table-wrap">
+              <table class="section-directory-table" aria-label="Section capacity and dropout directory">
+                <thead><tr><th>Section</th><th>Year Level</th><th>Track</th><th>Capacity / Slots</th><th>Dropouts</th></tr></thead>
+                <tbody id="sectionSnapshotRows"></tbody>
+              </table>
+            </div>
+          </div>
+          <p class="section-snapshot-note section-directory-note">Capacity uses the sample section roster as the slot limit. Dropout counts are illustrative allocations of the reported total; verify official counts with registrar records.</p>
         </section>
 
         <div class="footer governance-footer">
@@ -1002,21 +1313,37 @@
     <section class="tour-popover" id="tourPopover" role="dialog" aria-modal="true" aria-labelledby="tourStepTitle" aria-describedby="tourStepDescription" tabindex="-1">
       <div class="tour-popover-head">
         <span class="tour-kicker" id="tourStepKicker"></span>
-        <button class="tour-skip" id="tourSkip" type="button">Skip tour</button>
       </div>
       <h2 id="tourStepTitle"></h2>
       <p class="tour-description" id="tourStepDescription"></p>
-      <div class="tour-progress-meta">
-        <span id="tourStepCounter" aria-live="polite"></span>
-        <span>Dashboard help</span>
-      </div>
-      <div class="tour-progress-track" role="progressbar" id="tourProgress" aria-label="Tour progress" aria-valuemin="1" aria-valuemax="9" aria-valuenow="1">
-        <div class="tour-progress-fill" id="tourProgressFill"></div>
-      </div>
       <div class="tour-controls">
-        <button class="button" id="tourBack" type="button">Back</button>
-        <button class="button button-primary" id="tourNext" type="button">Next</button>
+        <button class="button button-primary" id="tourClose" type="button">Got it</button>
       </div>
+    </section>
+  </div>
+  <div class="onboarding-tour" id="onboardingTour" aria-hidden="true" hidden>
+    <section class="onboarding-card" role="dialog" aria-modal="true" aria-labelledby="onboardingTitle" aria-describedby="onboardingDescription" tabindex="-1">
+      <header class="onboarding-header">
+        <span class="onboarding-sparkle" aria-hidden="true">✦</span>
+        <div>
+          <span class="onboarding-step-label" id="onboardingStepLabel"></span>
+          <h2 class="onboarding-title" id="onboardingTitle"></h2>
+        </div>
+        <button class="onboarding-close" id="onboardingClose" type="button" aria-label="Close tour">×</button>
+      </header>
+      <div class="onboarding-body">
+        <p class="onboarding-description" id="onboardingDescription"></p>
+        <div class="onboarding-progress" id="onboardingProgress" role="group" aria-label="Tour progress">
+          <span class="onboarding-progress-dot" data-onboarding-step="0"></span>
+          <span class="onboarding-progress-dot" data-onboarding-step="1"></span>
+          <span class="onboarding-progress-dot" data-onboarding-step="2"></span>
+          <span class="onboarding-progress-dot" data-onboarding-step="3"></span>
+        </div>
+      </div>
+      <footer class="onboarding-footer">
+        <button class="onboarding-back" id="onboardingBack" type="button">Back</button>
+        <button class="button button-primary onboarding-next" id="onboardingNext" type="button"></button>
+      </footer>
     </section>
   </div>
   <script>
@@ -1031,71 +1358,236 @@
     const escapeHtml = (value) => String(value).replace(/[&<>"']/g, (char) => ({
       "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;"
     })[char]);
-    const DASHBOARD_TOUR_STORAGE_KEY = "spartanInsight360.dashboardTour.v1";
-    const dashboardTourSteps = [
-      {
-        target: ".intro-row",
-        kicker: "Step 1 of 9 • Program Chair View",
-        title: "Program Chair Decision-Support Workspace",
-        description: "This means that the CICS Program Chair can view Student & Faculty Portal records alongside SETE teaching evaluations in one unified workspace instead of checking separate systems."
+    const ACADEMIC_RISK_MODEL = {
+      intercept: -1.5,
+      weights: {
+        midtermGrade: 0.45,
+        attendanceRate: 0.35,
+        missingTasks: 0.45,
+        capacityUtilization: 0.30,
+        seteEngagement: 0.25
+      }
+    };
+    const ACADEMIC_RISK_FEATURES = [
+      { key: "midtermGrade", label: "Midterm grade average", normalize: (value) => (85 - value) / 10 },
+      { key: "attendanceRate", label: "Class attendance rate", normalize: (value) => (85 - value) / 10 },
+      { key: "missingTasks", label: "Missing / late portal submissions", normalize: (value) => value / 3 },
+      { key: "capacityUtilization", label: "Section capacity utilization", normalize: (value) => Math.max(0, (value - 95) / 5) },
+      { key: "seteEngagement", label: "SETE engagement / response rate", normalize: (value) => (75 - value) / 10 }
+    ];
+    const RISK_INPUT_CONTROLS = [
+      { key: "midtermGrade", inputId: "riskMidtermGrade", outputId: "riskMidtermGradeValue", suffix: "%" },
+      { key: "attendanceRate", inputId: "riskAttendanceRate", outputId: "riskAttendanceRateValue", suffix: "%" },
+      { key: "missingTasks", inputId: "riskMissingTasks", outputId: "riskMissingTasksValue", suffix: " tasks" },
+      { key: "capacityUtilization", inputId: "riskCapacityUtilization", outputId: "riskCapacityUtilizationValue", suffix: "%" },
+      { key: "seteEngagement", inputId: "riskSeteEngagement", outputId: "riskSeteEngagementValue", suffix: "%" }
+    ];
+    const ACADEMIC_RISK_PRESETS = {
+      "3104": { midtermGrade: 65, attendanceRate: 62, missingTasks: 8, capacityUtilization: 106, seteEngagement: 48 },
+      "2102": { midtermGrade: 73, attendanceRate: 77, missingTasks: 4, capacityUtilization: 98, seteEngagement: 64 },
+      "1101": { midtermGrade: 91, attendanceRate: 96, missingTasks: 0, capacityUtilization: 84, seteEngagement: 89 }
+    };
+    function predictAcademicRisk(inputs) {
+      const contributions = ACADEMIC_RISK_FEATURES.map((feature) => {
+        const normalizedValue = feature.normalize(Number(inputs[feature.key]));
+        return {
+          key: feature.key,
+          label: feature.label,
+          normalizedValue,
+          contribution: ACADEMIC_RISK_MODEL.weights[feature.key] * normalizedValue
+        };
+      });
+      const logit = ACADEMIC_RISK_MODEL.intercept + contributions.reduce((sum, feature) => sum + feature.contribution, 0);
+      const probability = 1 / (1 + Math.exp(-logit));
+      const status = probability < 0.35
+        ? { key: "low", label: "Low Risk (On Target)", badgeClass: "badge-good" }
+        : probability < 0.65
+          ? { key: "moderate", label: "Moderate Risk (Warning)", badgeClass: "badge-watch" }
+          : { key: "high", label: "High Risk (Critical Intervention)", badgeClass: "badge-danger" };
+      return { logit, probability, status, contributions };
+    }
+    function riskRecommendation(prediction) {
+      const topDrivers = prediction.contributions
+        .filter((feature) => feature.contribution > 0)
+        .sort((a, b) => b.contribution - a.contribution)
+        .slice(0, 2)
+        .map((feature) => feature.label.toLowerCase());
+      const focus = topDrivers.length ? topDrivers.join(" and ") : "current course progress";
+      if (prediction.status.key === "high") {
+        return `Schedule early academic advising and peer tutoring. Prioritize ${focus} through human review and follow up using authorized course records.`;
+      }
+      if (prediction.status.key === "moderate") {
+        return `Set an early check-in, review ${focus}, and agree on a short-term progress plan with the student support team.`;
+      }
+      return "Maintain current academic supports and review progress again at the next assessment checkpoint.";
+    }
+    function renderAcademicRiskPrediction() {
+      const inputs = Object.fromEntries(RISK_INPUT_CONTROLS.map(({ key, inputId, outputId, suffix }) => {
+        const value = Number($(inputId).value);
+        $(outputId).textContent = `${value}${suffix}`;
+        return [key, value];
+      }));
+      const prediction = predictAcademicRisk(inputs);
+      $("riskProbability").textContent = `${(prediction.probability * 100).toFixed(1)}%`;
+      $("riskLogit").textContent = `Logit score: ${prediction.logit < 0 ? "−" : ""}${Math.abs(prediction.logit).toFixed(2)}`;
+      $("riskStatusBadge").className = `badge ${prediction.status.badgeClass} risk-status-badge`;
+      $("riskStatusBadge").textContent = prediction.status.label;
+      $("riskRecommendation").textContent = riskRecommendation(prediction);
+      const largestContribution = Math.max(0.01, ...prediction.contributions.map((feature) => Math.abs(feature.contribution)));
+      $("riskDrivers").innerHTML = [...prediction.contributions]
+        .sort((a, b) => Math.abs(b.contribution) - Math.abs(a.contribution))
+        .map((feature) => {
+          const direction = feature.contribution > 0 ? "is-risk" : feature.contribution < 0 ? "is-protective" : "is-neutral";
+          const amount = feature.contribution > 0
+            ? `+${feature.contribution.toFixed(2)} risk`
+            : feature.contribution < 0
+              ? `−${Math.abs(feature.contribution).toFixed(2)} protective`
+              : "0.00 neutral";
+          const width = (Math.abs(feature.contribution) / largestContribution) * 100;
+          return `<div class="risk-driver-row ${direction}">
+            <div class="risk-driver-label"><strong>${escapeHtml(feature.label)}</strong><span class="risk-driver-value">${amount}</span></div>
+            <div class="risk-driver-track" aria-hidden="true"><span class="risk-driver-fill" style="width:${width.toFixed(1)}%"></span></div>
+          </div>`;
+        }).join("");
+    }
+    let pendingPanelJump = null;
+    let highlightedPanelJump = null;
+    let panelJumpArrivalTimer = 0;
+    let panelJumpHighlightTimer = 0;
+    let panelJumpScrollEndHandler = null;
+    let panelJumpScrollHandler = null;
+    function clearPanelJump() {
+      if (panelJumpScrollEndHandler) document.removeEventListener("scrollend", panelJumpScrollEndHandler);
+      if (panelJumpScrollHandler) window.removeEventListener("scroll", panelJumpScrollHandler);
+      window.clearTimeout(panelJumpArrivalTimer);
+      window.clearTimeout(panelJumpHighlightTimer);
+      highlightedPanelJump?.classList.remove("panel-jump-highlight");
+      pendingPanelJump = null;
+      highlightedPanelJump = null;
+      panelJumpScrollEndHandler = null;
+      panelJumpScrollHandler = null;
+    }
+    function jumpToKpiTarget(targetId) {
+      const target = $(targetId);
+      if (!target) return;
+      clearPanelJump();
+      pendingPanelJump = target;
+      const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+      const highlightTarget = () => {
+        if (pendingPanelJump !== target) return;
+        if (panelJumpScrollEndHandler) document.removeEventListener("scrollend", panelJumpScrollEndHandler);
+        if (panelJumpScrollHandler) window.removeEventListener("scroll", panelJumpScrollHandler);
+        window.clearTimeout(panelJumpArrivalTimer);
+        panelJumpScrollEndHandler = null;
+        panelJumpScrollHandler = null;
+        pendingPanelJump = null;
+        target.classList.remove("panel-jump-highlight");
+        void target.offsetWidth;
+        target.classList.add("panel-jump-highlight");
+        highlightedPanelJump = target;
+        panelJumpHighlightTimer = window.setTimeout(() => {
+          if (highlightedPanelJump === target) {
+            target.classList.remove("panel-jump-highlight");
+            highlightedPanelJump = null;
+          }
+        }, 1500);
+      };
+      if (!prefersReducedMotion) {
+        panelJumpScrollEndHandler = highlightTarget;
+        panelJumpScrollHandler = () => {
+          window.clearTimeout(panelJumpArrivalTimer);
+          panelJumpArrivalTimer = window.setTimeout(highlightTarget, 150);
+        };
+        document.addEventListener("scrollend", panelJumpScrollEndHandler, { once: true });
+        window.addEventListener("scroll", panelJumpScrollHandler, { passive: true });
+        panelJumpArrivalTimer = window.setTimeout(highlightTarget, 300);
+      }
+      target.scrollIntoView({ behavior: prefersReducedMotion ? "instant" : "smooth", block: "start" });
+      if (prefersReducedMotion) highlightTarget();
+    }
+    const contextualHelpContent = {
+      filters: {
+        kicker: "FILTER HELP",
+        title: "Dashboard Filters",
+        description: "This means these controls narrow the dashboard to the selected academic cohort. This helps you focus comparisons on a specific year, term, year level, track, or subject; use Reset Filters to return to the default view."
       },
-      {
-        target: ".filters",
-        mobileTarget: ".filters",
-        kicker: "Step 2 of 9 • Granular Filtering",
-        title: "Academic Year, Semester, Year Level & Subject Filters",
-        description: "This means that the Program Chair can narrow down all metrics by Academic Year, Semester, Year Level (1st–4th Year), or specific CICS subjects, and every card and chart updates automatically."
-      },
-      {
-        target: '.part3-kpi[data-kpi-card="late"]',
-        kicker: "Step 3 of 9 • Operational KPI 1",
+      "kpi-late": {
+        kicker: "KPI HELP",
         title: "Section Capacity Utilization",
-        description: "This means that the Program Chair can immediately see when a CICS section reaches 100% capacity with waitlisted students, signaling when to open additional enrollment slots."
+        description: "This means the metric shows how much of a section's capacity is in use. This helps identify sections that may need enrollment adjustments; the displayed 98% and waitlist summary are supplied Program Chair figures."
       },
-      {
-        target: '.part3-kpi[data-kpi-card="coverage"]',
-        kicker: "Step 4 of 9 • Operational KPI 2",
+      "kpi-coverage": {
+        kicker: "KPI HELP",
         title: "CICS Semester Dropout Rate",
-        description: "This means that the department can track how many CICS students dropped out versus remained enrolled during the current semester, making it easier to spot which year level needs early advising."
+        description: "This means the metric shows the share of enrolled students reported as dropped during the semester. This helps identify where advising may be needed; the summary reports 18 of 428 students, while section allocations are illustrative and should be confirmed with registrar records."
       },
-      {
-        target: '.part3-kpi[data-kpi-card="passing"]',
-        kicker: "Step 5 of 9 • Academic KPI 3",
+      "kpi-passing": {
+        kicker: "KPI HELP",
         title: "Student Passing Rate per Section",
-        description: "This means that the academic pass rate of each section is measured independently from SETE evaluation turnout, preventing student grade outcomes from being confused with survey participation."
+        description: "This means the metric shows the share of grade records marked as passing, independently of SETE participation. This helps identify academic outcomes that may need support; the KPI summary is supplied separately and the section chart uses illustrative sample grade records."
+      },
+      "kpi-facultyScore": {
+        kicker: "KPI HELP",
+        title: "SETE Composite Score",
+        description: "This means the metric summarizes teaching-effectiveness ratings on a five-point scale. This helps compare faculty feedback with the target, but should be considered alongside response coverage so low-turnout results are not overinterpreted."
+      },
+      "kpi-response": {
+        kicker: "KPI HELP",
+        title: "SETE Response Rate per Section",
+        description: "This means the metric shows what share of invited students submitted a SETE response, not how highly they rated teaching. This helps assess how representative the feedback may be; the KPI summary is supplied separately and the section chart uses selected sample records."
+      },
+      "panel-directory": {
+        kicker: "PANEL HELP",
+        title: "Section Capacity & Dropouts Directory",
+        description: "This means the directory lists each filtered section's year, track, capacity, open slots, and dropout count. This helps you find sections by section number, track, or assigned faculty; dropout allocations are illustrative and should be verified against official records."
+      },
+      "panel-passing": {
+        kicker: "CHART HELP",
+        title: "Passing Rate by Section",
+        description: "This means each mark compares a section's passing rate, ordered from lowest to highest. This helps reveal sections below the chart's 85% reference line; select a mark to inspect details. Chart records are illustrative samples."
+      },
+      "panel-response": {
+        kicker: "CHART HELP",
+        title: "SETE Response Rate by Section",
+        description: "This means each bar compares a section's SETE participation, ordered from lowest to highest. This helps find sections below the 80% response target; counts show responses out of invitations, and selecting a bar opens details."
+      },
+      "panel-coverage": {
+        kicker: "CHART HELP",
+        title: "SETE Rating Coverage",
+        description: "This means the ring compares sections with ratings against those still pending, while the bars show coverage by track. This helps locate gaps in evaluation coverage; select a ring segment to inspect its section records."
+      },
+      "panel-followup": {
+        kicker: "PANEL HELP",
+        title: "Immediate Follow-Up",
+        description: "This means section-subject items are ranked by overdue grade submissions and then low SETE response. This helps prioritize follow-up when either threshold is missed; select a row to inspect submission and response details."
+      },
+      "panel-trend": {
+        kicker: "CHART HELP",
+        title: "SETE Score and Response Trends",
+        description: "This means the chart tracks SETE mean scores and student response rates across terms up to the selected period. This helps you compare teaching feedback over time while checking participation, since low response coverage can make a mean score less representative."
+      },
+      "panel-risk-predictor": {
+        kicker: "MODEL HELP",
+        title: "Academic Difficulty Risk Predictor",
+        description: "This means the local logistic model combines midterm grade average, attendance, missing or late portal submissions, section capacity utilization, and SETE response engagement, then converts the weighted logit with a sigmoid. Below 35% is Low Risk, 35%–64% is Moderate Risk, and 65% or higher is High Risk. Use the estimate to guide human-led academic support and verify records; it is an educational simulation, does not make student or faculty decisions, and SETE engagement must never be used for personnel evaluation."
+      }
+    };
+    const ONBOARDING_TOUR_STEPS = [
+      {
+        title: "Welcome to BAT 405 Analytics",
+        body: "This friendly executive workspace gives CICS Program Chairs a clear view of grade submissions, SETE participation, passing rates, and section capacities."
       },
       {
-        targets: [
-          '.part3-kpi[data-kpi-card="facultyScore"]',
-          '.part3-kpi[data-kpi-card="response"]'
-        ],
-        mobileTargets: [
-          '.part3-kpi[data-kpi-card="facultyScore"]',
-          '.part3-kpi[data-kpi-card="response"]'
-        ],
-        kicker: "Step 6 of 9 • Teaching Effectiveness KPIs 4 & 5",
-        title: "SETE Composite Score & SETE Response Rate",
-        description: "This means that the Program Chair evaluates faculty teaching scores alongside section-level SETE response rates, ensuring low-turnout sections are flagged before drawing conclusions."
+        title: "Smart Filters & Track Shortcuts",
+        body: "Use the top filter bar to slice metrics by Year Level, Academic Year, Semester, Track, or Subject—or click any Track card in the maroon sidebar for instant filtering."
       },
       {
-        target: 'section[aria-labelledby="insightsTitle"]',
-        kicker: "Step 7 of 9 • Automated Decision Support",
-        title: "Key Insights & Recommended Actions",
-        description: "This means that the dashboard automatically highlights top priorities—such as full sections needing extra slots, year levels with rising dropouts, and sections with low SETE turnout—so no critical issue is missed."
+        title: "Interactive Charts & Drill-Downs",
+        body: "Every bar in the Passing Rate and SETE Response charts—plus every table row—is clickable! Click any section to open the Inspection Drawer and send a friendly faculty reminder."
       },
       {
-        target: ".viz-grid",
-        mobileTarget: ".viz-grid",
-        kicker: "Step 8 of 9 • Visual Analytics",
-        title: "Interactive Charts & Section Breakdowns",
-        description: "This means that the user can compare section passing rates, SETE response rates, and multi-semester trends visually, and click on any data point or section row to inspect detailed records."
-      },
-      {
-        target: ".notification-anchor",
-        mobileTarget: ".notification-anchor",
-        kicker: "Step 9 of 9 • Threshold Alerts & Privacy",
-        title: "Proactive Alerts & Data Governance",
-        description: "This means that the system automatically warns the Program Chair whenever capacity, dropout, or SETE thresholds are breached while keeping confidential student and faculty records protected."
+        title: "Built-In Privacy & Anonymization",
+        body: "Student SETE scores are displayed strictly as anonymized aggregates. Qualitative comments are automatically unlocked only when a section reaches 5 or more student responses."
       }
     ];
     const termKeys = [
@@ -1605,7 +2097,10 @@
         const dropouts = sectionDropoutCount(section);
         const status = `${enrolled}/${capacity} ${availableSlots ? `· ${availableSlots} slots open` : "Full"} · ${dropouts} dropouts`;
         const detail = {
+          sectionId: section.id,
           section: `Section ${section.id} · Year ${section.yearLevel} · ${section.track}`,
+          track: section.track,
+          trackName: section.trackName,
           subject: "Section capacity and dropout snapshot",
           subjectCode: "All assigned subjects",
           faculty: "Program Chair overview",
@@ -1886,24 +2381,8 @@
       openFollowUpModal(notification.title, [detail], notification.action);
     }
 
-    let dashboardTourIndex = 0;
     let dashboardTourTargets = [];
-    function visibleDashboardTourTargets(step) {
-      const isMobile = matchMedia("(max-width: 650px)").matches;
-      const selectors = isMobile && step.mobileTargets
-        ? step.mobileTargets
-        : isMobile && step.mobileTarget
-          ? [step.mobileTarget]
-          : step.targets || [step.target];
-      return selectors.flatMap((selector) => [...document.querySelectorAll(selector)])
-        .filter((element) => {
-          const style = getComputedStyle(element);
-          return element.getClientRects().length > 0 &&
-            style.display !== "none" &&
-            style.visibility !== "hidden" &&
-            style.opacity !== "0";
-        });
-    }
+    let contextualHelpTrigger = null;
 
     function dashboardTourBounds() {
       const rects = dashboardTourTargets.map((element) => element.getBoundingClientRect());
@@ -2037,96 +2516,117 @@
       popover.style.top = `${placement.top}px`;
     }
 
-    function showDashboardTourStep(index) {
-      const direction = index < dashboardTourIndex ? -1 : 1;
-      let candidateIndex = Math.max(0, Math.min(index, dashboardTourSteps.length - 1));
-      let candidateTargets = [];
-      while (candidateIndex >= 0 && candidateIndex < dashboardTourSteps.length) {
-        candidateTargets = visibleDashboardTourTargets(dashboardTourSteps[candidateIndex]);
-        if (candidateTargets.length) break;
-        candidateIndex += direction;
-      }
-      if (!candidateTargets.length) {
-        closeDashboardTour(direction > 0 ? "completed" : "skipped");
-        return;
-      }
-      dashboardTourIndex = candidateIndex;
-      const step = dashboardTourSteps[dashboardTourIndex];
-      dashboardTourTargets = candidateTargets;
-      $("tourStepKicker").textContent = step.kicker;
-      $("tourStepTitle").textContent = step.title;
-      $("tourStepDescription").textContent = step.description;
-      $("tourStepCounter").textContent = `Step ${dashboardTourIndex + 1} of ${dashboardTourSteps.length}`;
-      $("tourProgress").setAttribute("aria-valuenow", String(dashboardTourIndex + 1));
-      $("tourProgress").setAttribute("aria-valuemax", String(dashboardTourSteps.length));
-      $("tourProgressFill").style.width = `${(dashboardTourIndex + 1) / dashboardTourSteps.length * 100}%`;
-      $("tourBack").disabled = !visibleTourStepExists(dashboardTourIndex - 1, -1);
-      $("tourNext").textContent = visibleTourStepExists(dashboardTourIndex + 1, 1) ? "Next" : "Finish";
-      const targetBounds = dashboardTourBounds();
-      window.scrollTo({
-        top: Math.max(0, window.scrollY + targetBounds.top + targetBounds.height / 2 - window.innerHeight / 2),
-        behavior: "smooth"
-      });
-      positionDashboardTour();
-      requestAnimationFrame(positionDashboardTour);
-      window.setTimeout(positionDashboardTour, 280);
-      $("tourNext").focus({ preventScroll: true });
-    }
-
-    function visibleTourStepExists(startIndex, direction) {
-      for (let index = startIndex; index >= 0 && index < dashboardTourSteps.length; index += direction) {
-        if (visibleDashboardTourTargets(dashboardTourSteps[index]).length) return true;
-      }
-      return false;
-    }
-
-    function refreshDashboardTourTarget() {
-      if ($("dashboardTour").hidden) return;
-      const targets = visibleDashboardTourTargets(dashboardTourSteps[dashboardTourIndex]);
-      if (!targets.length) {
-        showDashboardTourStep(dashboardTourIndex);
-        return;
-      }
-      dashboardTourTargets = targets;
-      positionDashboardTour();
-    }
-
-    function closeDashboardTour(result) {
-      $("dashboardTour").hidden = true;
-      $("dashboardTour").setAttribute("aria-hidden", "true");
-      $("dashboardView").inert = false;
-      window.removeEventListener("scroll", positionDashboardTour, true);
-      window.removeEventListener("resize", refreshDashboardTourTarget);
-      localStorage.setItem(DASHBOARD_TOUR_STORAGE_KEY, result);
-      dashboardTourTargets = [];
-      $("takeTourButton").focus({ preventScroll: true });
-    }
-
-    function startDashboardTour() {
+    function openContextualHelp(target, content, trigger) {
       if ($("dashboardView").hidden) transitionToView("dashboard");
-      dashboardTourIndex = 0;
+      contextualHelpTrigger = trigger;
+      trigger.setAttribute("aria-expanded", "true");
+      dashboardTourTargets = [target];
+      $("tourStepKicker").textContent = content.kicker;
+      $("tourStepTitle").textContent = content.title;
+      $("tourStepDescription").textContent = content.description;
       $("dashboardTour").hidden = false;
       $("dashboardTour").setAttribute("aria-hidden", "false");
       $("dashboardView").inert = true;
       window.addEventListener("scroll", positionDashboardTour, true);
       window.addEventListener("resize", refreshDashboardTourTarget);
-      showDashboardTourStep(0);
+      const bounds = dashboardTourBounds();
+      window.scrollTo({
+        top: Math.max(0, window.scrollY + bounds.top + bounds.height / 2 - window.innerHeight / 2),
+        behavior: "smooth"
+      });
+      positionDashboardTour();
+      requestAnimationFrame(positionDashboardTour);
+      window.setTimeout(positionDashboardTour, 280);
+      $("tourClose").focus({ preventScroll: true });
     }
 
-    function maybeStartDashboardTour() {
-      if (!$("dashboardView").hidden && $("dashboardTour").hidden &&
-          !localStorage.getItem(DASHBOARD_TOUR_STORAGE_KEY)) {
-        startDashboardTour();
+    function refreshDashboardTourTarget() {
+      if (!$("dashboardTour").hidden) positionDashboardTour();
+    }
+
+    function closeContextualHelp() {
+      if ($("dashboardTour").hidden) return;
+      $("dashboardTour").hidden = true;
+      $("dashboardTour").setAttribute("aria-hidden", "true");
+      $("dashboardView").inert = false;
+      window.removeEventListener("scroll", positionDashboardTour, true);
+      window.removeEventListener("resize", refreshDashboardTourTarget);
+      dashboardTourTargets = [];
+      const trigger = contextualHelpTrigger;
+      contextualHelpTrigger = null;
+      if (trigger?.isConnected) {
+        trigger.setAttribute("aria-expanded", "false");
+        trigger.focus({ preventScroll: true });
       }
     }
 
-    function advanceDashboardTour() {
-      if (dashboardTourIndex === dashboardTourSteps.length - 1) {
-        closeDashboardTour("completed");
-      } else {
-        showDashboardTourStep(dashboardTourIndex + 1);
-      }
+    let onboardingStepIndex = 0;
+    let onboardingReturnFocus = null;
+    let dashboardInertBeforeOnboarding = false;
+
+    function renderOnboardingStep() {
+      const step = ONBOARDING_TOUR_STEPS[onboardingStepIndex];
+      $("onboardingStepLabel").textContent = `STEP ${onboardingStepIndex + 1} OF ${ONBOARDING_TOUR_STEPS.length}`;
+      $("onboardingTitle").textContent = step.title;
+      $("onboardingDescription").textContent = step.body;
+      $("onboardingBack").hidden = onboardingStepIndex === 0;
+      $("onboardingNext").textContent = onboardingStepIndex === ONBOARDING_TOUR_STEPS.length - 1
+        ? "Start exploring ✓"
+        : "Next tip →";
+      $("onboardingProgress").setAttribute("aria-label", `Step ${onboardingStepIndex + 1} of ${ONBOARDING_TOUR_STEPS.length}`);
+      $("onboardingProgress").querySelectorAll("[data-onboarding-step]").forEach((dot, index) => {
+        const isCurrentStep = index === onboardingStepIndex;
+        dot.classList.toggle("is-active", isCurrentStep);
+        if (isCurrentStep) dot.setAttribute("aria-current", "step");
+        else dot.removeAttribute("aria-current");
+      });
     }
+
+    function openOnboardingTour() {
+      if (!$("onboardingTour").hidden) return;
+      onboardingReturnFocus = document.activeElement;
+      dashboardInertBeforeOnboarding = $("dashboardView").inert;
+      $("dashboardView").inert = true;
+      $("takeTourButton").setAttribute("aria-expanded", "true");
+      $("onboardingTour").hidden = false;
+      $("onboardingTour").setAttribute("aria-hidden", "false");
+      onboardingStepIndex = 0;
+      renderOnboardingStep();
+      $("onboardingClose").focus({ preventScroll: true });
+    }
+
+    function closeOnboardingTour() {
+      if ($("onboardingTour").hidden) return;
+      $("onboardingTour").hidden = true;
+      $("onboardingTour").setAttribute("aria-hidden", "true");
+      $("dashboardView").inert = dashboardInertBeforeOnboarding;
+      $("takeTourButton").setAttribute("aria-expanded", "false");
+      const returnFocus = onboardingReturnFocus;
+      onboardingReturnFocus = null;
+      if (returnFocus?.isConnected) returnFocus.focus({ preventScroll: true });
+    }
+
+    function advanceOnboardingTour() {
+      if (onboardingStepIndex === ONBOARDING_TOUR_STEPS.length - 1) {
+        closeOnboardingTour();
+        return;
+      }
+      onboardingStepIndex += 1;
+      renderOnboardingStep();
+    }
+
+    document.querySelectorAll(".contextual-help-btn").forEach((trigger) => {
+      trigger.setAttribute("aria-haspopup", "dialog");
+      trigger.setAttribute("aria-controls", "dashboardTour");
+      trigger.setAttribute("aria-expanded", "false");
+      trigger.addEventListener("click", () => {
+        const content = contextualHelpContent[trigger.dataset.contextualHelp];
+        const target = trigger.closest(".kpi-card, .panel, .filters");
+        if (!content) throw new Error(`Missing contextual help content for ${trigger.dataset.contextualHelp}.`);
+        if (!target) throw new Error(`No contextual help target for ${trigger.dataset.contextualHelp}.`);
+        openContextualHelp(target, content, trigger);
+      });
+    });
 
     let passingShowAll = false;
 
@@ -2412,15 +2912,43 @@
     }
 
     function renderSectionSnapshot(data) {
-      $("sectionSnapshotRows").innerHTML = sectionOperationalRows(data).map((record) => `
-        <tr>
-          <td>${escapeHtml(record.section)}</td>
-          <td>Year ${record.yearLevel}</td>
-          <td>${record.enrolled}/${record.capacity}${record.availableSlots
-            ? ` · ${record.availableSlots} slots open`
-            : ` Full <span class="capacity-action">Open slots</span>`}</td>
-          <td>${record.dropouts}</td>
-        </tr>`).join("");
+      const facultyBySection = new Map();
+      data.assignments.forEach((assignment) => {
+        const names = facultyBySection.get(assignment.sectionId) || [];
+        names.push(assignment.facultyName);
+        facultyBySection.set(assignment.sectionId, names);
+      });
+      const query = $("sectionDirectorySearch").value.trim().toLowerCase();
+      const allRows = sectionOperationalRows(data).map((record) => ({
+        ...record,
+        facultyNames: [...new Set(facultyBySection.get(record.sectionId) || [])]
+      }));
+      const rows = allRows.filter((record) => !query || [
+        record.sectionId,
+        record.track,
+        record.trackName,
+        ...record.facultyNames
+      ].some((value) => String(value).toLowerCase().includes(query)));
+
+      $("sectionSnapshotRows").innerHTML = rows.length
+        ? rows.map((record) => {
+          const utilization = percent(record.enrolled, record.capacity);
+          const barColor = utilization >= 100 ? "#e11d48" : utilization >= 85 ? "#f59e0b" : "#10b981";
+          const slotLabel = record.availableSlots
+            ? `${record.availableSlots} slots open`
+            : "Full";
+          return `<tr data-section-id="${escapeHtml(record.sectionId)}" tabindex="0" aria-label="Inspect details for Section ${escapeHtml(record.sectionId)}">
+            <td><span class="section-directory-section">Section ${escapeHtml(record.sectionId)}</span><span class="section-directory-meta"> · Year ${record.yearLevel} · ${escapeHtml(record.track)}</span></td>
+            <td><span class="section-directory-pill">Year ${record.yearLevel}</span></td>
+            <td><span class="section-directory-pill">${escapeHtml(record.trackName)}</span></td>
+            <td><div class="section-directory-capacity">
+              <span class="section-capacity-meter" role="img" aria-label="${record.enrolled} of ${record.capacity} seats used"><span class="section-capacity-meter-fill" style="width:${Math.min(100, utilization)}%;background:${barColor}"></span></span>
+              <span><strong>${record.enrolled}/${record.capacity}</strong> · <span class="section-capacity-slots">${slotLabel}</span></span>
+            </div></td>
+            <td class="section-dropout-count${record.dropouts > 1 ? " is-elevated" : ""}">${record.dropouts}</td>
+          </tr>`;
+        }).join("")
+        : `<tr><td class="section-directory-empty" colspan="5">No sections match this search.</td></tr>`;
     }
 
     function renderDashboard() {
@@ -2478,7 +3006,6 @@
       if (showDashboard) {
         showView();
         if (scrollToTop) window.scrollTo({ top: 0, behavior: "smooth" });
-        window.setTimeout(maybeStartDashboardTour, 380);
       } else if (scrollToTop) {
         window.scrollTo({ top: 0, behavior: "smooth" });
       }
@@ -2697,14 +3224,8 @@
         return;
       }
       const kpiButton = event.target.closest("[data-kpi]");
-      if (kpiButton && lastDashboardData) {
-        const key = kpiButton.dataset.kpi;
-        const metric = lastDashboardMetrics[key];
-        const rows = recordsForKpi(key, lastDashboardData);
-        const description = key === "facultyScore"
-          ? `${rows.length} rated section-level records across ${metric.facultyCount} faculty identities. Criterion scores under 4.00 are flagged for instructional coaching.`
-          : `${lastDashboardData.semester} · AY ${lastDashboardData.year} · ${lastDashboardData.track === "All" ? "All tracks" : lastDashboardData.track}. Student identities are not displayed.`;
-        openFollowUpModal(metric.title, rows, description);
+      if (kpiButton) {
+        jumpToKpiTarget(kpiButton.dataset.kpiTarget);
         return;
       }
       const responseSectionMark = event.target.closest("[data-response-section-id]");
@@ -2756,8 +3277,31 @@
         mark.dispatchEvent(new MouseEvent("click", { bubbles: true }));
       }
     });
+    $("sectionSnapshotRows").addEventListener("keydown", (event) => {
+      const row = event.target.closest("tr[data-section-id]");
+      if (row && (event.key === "Enter" || event.key === " ")) {
+        event.preventDefault();
+        row.dispatchEvent(new MouseEvent("click", { bubbles: true }));
+      }
+    });
     ["yearLevelFilter", "yearFilter", "semesterFilter", "trackFilter", "subjectFilter"].forEach((id) => {
       $(id).addEventListener("change", renderDashboard);
+    });
+    $("sectionDirectorySearch").addEventListener("input", () => {
+      if (lastDashboardData) renderSectionSnapshot(lastDashboardData);
+    });
+    RISK_INPUT_CONTROLS.forEach(({ inputId }) => {
+      $(inputId).addEventListener("input", renderAcademicRiskPrediction);
+    });
+    document.querySelectorAll("[data-risk-preset]").forEach((button) => {
+      button.addEventListener("click", () => {
+        const preset = ACADEMIC_RISK_PRESETS[button.dataset.riskPreset];
+        if (!preset) return;
+        RISK_INPUT_CONTROLS.forEach(({ key, inputId }) => {
+          $(inputId).value = preset[key];
+        });
+        renderAcademicRiskPrediction();
+      });
     });
     $("resetFilters").addEventListener("click", () => {
       $("yearLevelFilter").value = "All";
@@ -2767,31 +3311,52 @@
       $("subjectFilter").value = "All";
       renderDashboard();
     });
-    $("takeTourButton").addEventListener("click", startDashboardTour);
-    $("tourBack").addEventListener("click", () => showDashboardTourStep(dashboardTourIndex - 1));
-    $("tourNext").addEventListener("click", advanceDashboardTour);
-    $("tourSkip").addEventListener("click", () => closeDashboardTour("skipped"));
+    $("takeTourButton").addEventListener("click", openOnboardingTour);
+    $("onboardingClose").addEventListener("click", closeOnboardingTour);
+    $("onboardingBack").addEventListener("click", () => {
+      if (onboardingStepIndex === 0) return;
+      onboardingStepIndex -= 1;
+      renderOnboardingStep();
+    });
+    $("onboardingNext").addEventListener("click", advanceOnboardingTour);
+    $("onboardingTour").addEventListener("click", (event) => {
+      if (event.target === $("onboardingTour")) closeOnboardingTour();
+    });
+    $("tourClose").addEventListener("click", closeContextualHelp);
+    $("dashboardTour").addEventListener("click", (event) => {
+      if (event.target.closest(".tour-shade")) closeContextualHelp();
+    });
     document.addEventListener("keydown", (event) => {
+      if (!$("onboardingTour").hidden) {
+        if (event.key === "Escape") {
+          event.preventDefault();
+          closeOnboardingTour();
+        } else if (event.key === "Tab") {
+          const focusable = [...$("onboardingTour").querySelectorAll("button:not([hidden]):not(:disabled)")];
+          const first = focusable[0];
+          const last = focusable[focusable.length - 1];
+          if (!focusable.includes(document.activeElement)) {
+            event.preventDefault();
+            first.focus();
+          } else if (event.shiftKey && document.activeElement === first) {
+            event.preventDefault();
+            last.focus();
+          } else if (!event.shiftKey && document.activeElement === last) {
+            event.preventDefault();
+            first.focus();
+          }
+        }
+        return;
+      }
       if ($("dashboardTour").hidden) return;
       if (event.key === "Escape") {
         event.preventDefault();
-        closeDashboardTour("skipped");
-      } else if (event.key === "ArrowRight") {
-        event.preventDefault();
-        advanceDashboardTour();
-      } else if (event.key === "ArrowLeft" && !$("tourBack").disabled) {
-        event.preventDefault();
-        showDashboardTourStep(dashboardTourIndex - 1);
+        closeContextualHelp();
       } else if (event.key === "Tab") {
-        const focusable = [...$("dashboardTour").querySelectorAll("button:not(:disabled)")];
-        const first = focusable[0];
-        const last = focusable[focusable.length - 1];
-        if (event.shiftKey && document.activeElement === first) {
+        const closeButton = $("tourClose");
+        if (document.activeElement === closeButton) {
           event.preventDefault();
-          last.focus();
-        } else if (!event.shiftKey && document.activeElement === last) {
-          event.preventDefault();
-          first.focus();
+          closeButton.focus();
         }
       }
     });
@@ -2858,12 +3423,16 @@
         requestedActiveHref = scrollToTop ? null : window.location.hash;
         if ($("dashboardView").hidden) transitionToView("dashboard", false, scrollToTop);
         if (!scrollToTop) {
-          document.querySelector(window.location.hash)?.scrollIntoView({ behavior: "smooth", block: "start" });
+          document.querySelector(window.location.hash)?.scrollIntoView({
+            behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "instant" : "smooth",
+            block: "start"
+          });
         }
       }
       showView();
       updateActiveModule();
     });
+    renderAcademicRiskPrediction();
     renderDashboard();
   </script>
 </body>
