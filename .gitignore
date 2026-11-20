@@ -3,3 +3,10 @@ Thumbs.db
 .DS_Store
 *.log
 node_modules/
+.venv/
+runtime/
+__pycache__/
+*.py[cod]
+ml/artifacts/*.joblib
+ml/artifacts/*.json
+data/academic_risk_training.csv

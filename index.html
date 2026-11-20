@@ -557,6 +557,10 @@
     .risk-result-label, .risk-model-label { color: var(--muted); font-size: 9px; font-weight: 800; letter-spacing: .06em; text-transform: uppercase; }
     .risk-probability { margin-top: 2px; color: var(--slate-700); font-size: 34px; font-variant-numeric: tabular-nums; font-weight: 800; letter-spacing: -.04em; line-height: 1.15; }
     .risk-status-badge { flex: 0 0 auto; white-space: normal; text-align: center; }
+    .risk-service-status { margin-top: 4px; color: #8994a4; font-size: 9px; }
+    .risk-model-retry { margin-top: 7px; padding: 0; border: 0; background: none; color: var(--maroon); cursor: pointer; font-size: 10px; font-weight: 700; }
+    .risk-model-retry:hover, .risk-model-retry:focus-visible { text-decoration: underline; }
+    .risk-model-retry:focus-visible { outline: 2px solid var(--maroon); outline-offset: 2px; }
     .risk-logit { margin-top: 3px; color: #8a95a5; font-size: 9px; font-variant-numeric: tabular-nums; }
     .risk-action-card { margin-top: 14px; padding: 12px; border-left: 3px solid var(--maroon); border-radius: 7px; background: #fff; }
     .risk-action-card p { margin: 5px 0 0; color: #536176; font-size: 11px; line-height: 1.55; }
@@ -1176,11 +1180,9 @@
           <div class="risk-predictor-grid">
             <section class="risk-tool-section risk-simulator-column" aria-labelledby="riskSimulatorTitle">
               <h3 class="risk-section-title" id="riskSimulatorTitle">Interactive Simulator</h3>
-              <p class="risk-section-copy">Load an illustrative section profile, then adjust any input to see the estimate update.</p>
-              <div class="risk-preset-buttons" aria-label="Load section presets">
-                <button class="risk-preset-button" type="button" data-risk-preset="3104">Load Section 3104 (High Risk)</button>
-                <button class="risk-preset-button" type="button" data-risk-preset="2102">Load Section 2102 (Moderate)</button>
-                <button class="risk-preset-button" type="button" data-risk-preset="1101">Load Section 1101 (On Track)</button>
+              <p class="risk-section-copy">Adjust a what-if scenario or load the latest eligible section aggregate from MySQL.</p>
+              <div class="risk-preset-buttons" id="riskSectionPresets" aria-label="Load section profiles">
+                <span class="risk-service-status" id="riskPresetStatus" aria-live="polite">Checking section data…</span>
               </div>
               <div class="risk-input-list">
                 <div class="risk-input-row">
@@ -1217,25 +1219,26 @@
                 <div class="risk-score-row">
                   <div>
                     <div class="risk-result-label">Predicted Academic Difficulty Probability</div>
-                    <div class="risk-probability" id="riskProbability">45.4%</div>
-                    <div class="risk-logit" id="riskLogit">Logit score: −0.19</div>
+                    <div class="risk-probability" id="riskProbability">—</div>
+                    <div class="risk-service-status" id="riskServiceStatus" aria-live="polite">Checking local model…</div>
+                    <button class="risk-model-retry" id="riskModelRetry" type="button">Connect local model</button>
                   </div>
-                  <span class="badge badge-watch risk-status-badge" id="riskStatusBadge">Moderate Risk (Warning)</span>
+                  <span class="badge badge-watch risk-status-badge" id="riskStatusBadge">Model unavailable</span>
                 </div>
                 <div class="risk-action-card">
                   <div class="risk-result-label">Recommended Program Chair Action</div>
-                  <p id="riskRecommendation">Check in with students, confirm missing work, and monitor attendance at the next progress review.</p>
+                  <p id="riskRecommendation">Load the locally trained model before using risk estimates.</p>
                 </div>
               </div>
               <div class="risk-drivers-section">
                 <h3 class="risk-section-title" style="margin-top:15px">Top Risk Drivers</h3>
-                <p class="risk-section-copy">Positive values increase risk; green bars show protective factors.</p>
-                <div class="risk-driver-list" id="riskDrivers"></div>
+                <p class="risk-section-copy">Bars show which current inputs push the estimate up or down.</p>
+                <div class="risk-driver-list" id="riskDrivers"><div class="risk-service-status">Drivers appear after a prediction.</div></div>
               </div>
               <div class="risk-model-summary">
                 <div class="risk-model-label">Model Validation Summary</div>
-                <p>Model: Logistic Regression · Training Sample: n = 428 CICS Records · Accuracy: 87.4% · Precision: 84.2% · Recall: 88.9% · ROC-AUC: 0.91</p>
-                <small>Offline case-study metrics. The current slider simulator uses fixed local coefficients and does not retrain or re-evaluate this model.</small>
+                <p id="riskModelMetrics">No trained model or evaluation metrics are available. Import the approved CICS records and train the local model.</p>
+                <small id="riskModelDetails">Performance values will appear here only after evaluation on a held-out set of real records.</small>
               </div>
             </section>
           </div>
@@ -1358,97 +1361,144 @@
     const escapeHtml = (value) => String(value).replace(/[&<>"']/g, (char) => ({
       "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;"
     })[char]);
-    const ACADEMIC_RISK_MODEL = {
-      intercept: -1.5,
-      weights: {
-        midtermGrade: 0.45,
-        attendanceRate: 0.35,
-        missingTasks: 0.45,
-        capacityUtilization: 0.30,
-        seteEngagement: 0.25
-      }
-    };
-    const ACADEMIC_RISK_FEATURES = [
-      { key: "midtermGrade", label: "Midterm grade average", normalize: (value) => (85 - value) / 10 },
-      { key: "attendanceRate", label: "Class attendance rate", normalize: (value) => (85 - value) / 10 },
-      { key: "missingTasks", label: "Missing / late portal submissions", normalize: (value) => value / 3 },
-      { key: "capacityUtilization", label: "Section capacity utilization", normalize: (value) => Math.max(0, (value - 95) / 5) },
-      { key: "seteEngagement", label: "SETE engagement / response rate", normalize: (value) => (75 - value) / 10 }
-    ];
     const RISK_INPUT_CONTROLS = [
-      { key: "midtermGrade", inputId: "riskMidtermGrade", outputId: "riskMidtermGradeValue", suffix: "%" },
-      { key: "attendanceRate", inputId: "riskAttendanceRate", outputId: "riskAttendanceRateValue", suffix: "%" },
-      { key: "missingTasks", inputId: "riskMissingTasks", outputId: "riskMissingTasksValue", suffix: " tasks" },
-      { key: "capacityUtilization", inputId: "riskCapacityUtilization", outputId: "riskCapacityUtilizationValue", suffix: "%" },
-      { key: "seteEngagement", inputId: "riskSeteEngagement", outputId: "riskSeteEngagementValue", suffix: "%" }
+      { key: "midterm_grade_average", inputId: "riskMidtermGrade", outputId: "riskMidtermGradeValue", suffix: "%" },
+      { key: "attendance_rate", inputId: "riskAttendanceRate", outputId: "riskAttendanceRateValue", suffix: "%" },
+      { key: "missing_portal_submissions", inputId: "riskMissingTasks", outputId: "riskMissingTasksValue", suffix: " tasks" },
+      { key: "section_capacity_utilization", inputId: "riskCapacityUtilization", outputId: "riskCapacityUtilizationValue", suffix: "%" },
+      { key: "sete_response_rate", inputId: "riskSeteEngagement", outputId: "riskSeteEngagementValue", suffix: "%" }
     ];
-    const ACADEMIC_RISK_PRESETS = {
-      "3104": { midtermGrade: 65, attendanceRate: 62, missingTasks: 8, capacityUtilization: 106, seteEngagement: 48 },
-      "2102": { midtermGrade: 73, attendanceRate: 77, missingTasks: 4, capacityUtilization: 98, seteEngagement: 64 },
-      "1101": { midtermGrade: 91, attendanceRate: 96, missingTasks: 0, capacityUtilization: 84, seteEngagement: 89 }
-    };
-    function predictAcademicRisk(inputs) {
-      const contributions = ACADEMIC_RISK_FEATURES.map((feature) => {
-        const normalizedValue = feature.normalize(Number(inputs[feature.key]));
-        return {
-          key: feature.key,
-          label: feature.label,
-          normalizedValue,
-          contribution: ACADEMIC_RISK_MODEL.weights[feature.key] * normalizedValue
-        };
-      });
-      const logit = ACADEMIC_RISK_MODEL.intercept + contributions.reduce((sum, feature) => sum + feature.contribution, 0);
-      const probability = 1 / (1 + Math.exp(-logit));
-      const status = probability < 0.35
-        ? { key: "low", label: "Low Risk (On Target)", badgeClass: "badge-good" }
-        : probability < 0.65
-          ? { key: "moderate", label: "Moderate Risk (Warning)", badgeClass: "badge-watch" }
-          : { key: "high", label: "High Risk (Critical Intervention)", badgeClass: "badge-danger" };
-      return { logit, probability, status, contributions };
-    }
-    function riskRecommendation(prediction) {
-      const topDrivers = prediction.contributions
-        .filter((feature) => feature.contribution > 0)
-        .sort((a, b) => b.contribution - a.contribution)
-        .slice(0, 2)
-        .map((feature) => feature.label.toLowerCase());
-      const focus = topDrivers.length ? topDrivers.join(" and ") : "current course progress";
-      if (prediction.status.key === "high") {
-        return `Schedule early academic advising and peer tutoring. Prioritize ${focus} through human review and follow up using authorized course records.`;
-      }
-      if (prediction.status.key === "moderate") {
-        return `Set an early check-in, review ${focus}, and agree on a short-term progress plan with the student support team.`;
-      }
-      return "Maintain current academic supports and review progress again at the next assessment checkpoint.";
-    }
-    function renderAcademicRiskPrediction() {
-      const inputs = Object.fromEntries(RISK_INPUT_CONTROLS.map(({ key, inputId, outputId, suffix }) => {
+    let riskModelAvailable = false;
+    let riskRequestSequence = 0;
+    let riskInputTimer = 0;
+    function riskInputsFromControls() {
+      return Object.fromEntries(RISK_INPUT_CONTROLS.map(({ key, inputId, outputId, suffix }) => {
         const value = Number($(inputId).value);
         $(outputId).textContent = `${value}${suffix}`;
         return [key, value];
       }));
-      const prediction = predictAcademicRisk(inputs);
-      $("riskProbability").textContent = `${(prediction.probability * 100).toFixed(1)}%`;
-      $("riskLogit").textContent = `Logit score: ${prediction.logit < 0 ? "−" : ""}${Math.abs(prediction.logit).toFixed(2)}`;
-      $("riskStatusBadge").className = `badge ${prediction.status.badgeClass} risk-status-badge`;
-      $("riskStatusBadge").textContent = prediction.status.label;
-      $("riskRecommendation").textContent = riskRecommendation(prediction);
-      const largestContribution = Math.max(0.01, ...prediction.contributions.map((feature) => Math.abs(feature.contribution)));
-      $("riskDrivers").innerHTML = [...prediction.contributions]
-        .sort((a, b) => Math.abs(b.contribution) - Math.abs(a.contribution))
-        .map((feature) => {
-          const direction = feature.contribution > 0 ? "is-risk" : feature.contribution < 0 ? "is-protective" : "is-neutral";
-          const amount = feature.contribution > 0
-            ? `+${feature.contribution.toFixed(2)} risk`
-            : feature.contribution < 0
-              ? `−${Math.abs(feature.contribution).toFixed(2)} protective`
-              : "0.00 neutral";
-          const width = (Math.abs(feature.contribution) / largestContribution) * 100;
-          return `<div class="risk-driver-row ${direction}">
-            <div class="risk-driver-label"><strong>${escapeHtml(feature.label)}</strong><span class="risk-driver-value">${amount}</span></div>
-            <div class="risk-driver-track" aria-hidden="true"><span class="risk-driver-fill" style="width:${width.toFixed(1)}%"></span></div>
-          </div>`;
-        }).join("");
+    }
+    function showRiskModelUnavailable(message) {
+      riskModelAvailable = false;
+      $("riskProbability").textContent = "—";
+      $("riskServiceStatus").textContent = message;
+      $("riskModelRetry").hidden = false;
+      $("riskStatusBadge").className = "badge badge-watch risk-status-badge";
+      $("riskStatusBadge").textContent = "Model unavailable";
+      $("riskRecommendation").textContent = "Predictions are unavailable until the local model is trained and running.";
+      $("riskModelMetrics").textContent = "No trained model or evaluation metrics are available. Import the approved CICS records and train the local model.";
+      $("riskModelDetails").textContent = "Performance values appear only after evaluation on a held-out set of real records.";
+      $("riskDrivers").replaceChildren();
+      const note = document.createElement("div");
+      note.className = "risk-service-status";
+      note.textContent = "Drivers appear after a prediction.";
+      $("riskDrivers").append(note);
+    }
+    function renderRiskModelMetrics(evaluation) {
+      const percent = (value) => `${(Number(value) * 100).toFixed(1)}%`;
+      $("riskModelMetrics").textContent = `Model: Logistic Regression · CICS records: n = ${evaluation.training_records} · Holdout: n = ${evaluation.holdout_records} · Accuracy: ${percent(evaluation.accuracy)} · Precision: ${percent(evaluation.precision)} · Recall: ${percent(evaluation.recall)} · ROC-AUC: ${Number(evaluation.roc_auc).toFixed(3)}`;
+      $("riskModelDetails").textContent = `Holdout threshold ${(Number(evaluation.evaluation_threshold) * 100).toFixed(0)}% · Display bands: <35% / 35–64% / ≥65% · Grouped by student · ${evaluation.outcome_definition} · Model ${evaluation.model_version}`;
+    }
+    function renderRiskDrivers(drivers) {
+      const container = $("riskDrivers");
+      container.replaceChildren();
+      const maximum = Math.max(0.001, ...drivers.map((driver) => Math.abs(Number(driver.impact))));
+      drivers.forEach((driver) => {
+        const impact = Number(driver.impact);
+        const row = document.createElement("div");
+        row.className = `risk-driver-row ${impact > 0 ? "is-risk" : impact < 0 ? "is-protective" : "is-neutral"}`;
+        const label = document.createElement("div");
+        label.className = "risk-driver-label";
+        const name = document.createElement("strong");
+        name.textContent = driver.label;
+        const direction = document.createElement("span");
+        direction.className = "risk-driver-value";
+        direction.textContent = impact > 0 ? "Raises estimate" : impact < 0 ? "Protective factor" : "Little change";
+        label.append(name, direction);
+        const track = document.createElement("div");
+        track.className = "risk-driver-track";
+        track.setAttribute("aria-hidden", "true");
+        const fill = document.createElement("span");
+        fill.className = "risk-driver-fill";
+        fill.style.width = `${(Math.abs(impact) / maximum * 100).toFixed(1)}%`;
+        track.append(fill);
+        row.append(label, track);
+        container.append(row);
+      });
+    }
+    async function renderAcademicRiskPrediction() {
+      const inputs = riskInputsFromControls();
+      if (!riskModelAvailable) return;
+      const requestSequence = ++riskRequestSequence;
+      $("riskServiceStatus").textContent = "Updating estimate…";
+      try {
+        const csrfToken = document.querySelector('meta[name="csrf-token"]')?.content;
+        if (!csrfToken) throw new Error("Open the dashboard through the local PHP sign-in page.");
+        const response = await fetch("predict.php", {
+          method: "POST",
+          headers: { "Content-Type": "application/json", "Accept": "application/json", "X-CSRF-Token": csrfToken },
+          body: JSON.stringify(inputs),
+          cache: "no-store"
+        });
+        const prediction = await response.json();
+        if (!response.ok) throw new Error(prediction.error || "The local model could not return a prediction.");
+        if (requestSequence !== riskRequestSequence) return;
+        const badgeClass = prediction.risk_band === "high" ? "badge-danger" : prediction.risk_band === "moderate" ? "badge-watch" : "badge-good";
+        $("riskProbability").textContent = `${(Number(prediction.probability) * 100).toFixed(1)}%`;
+        $("riskServiceStatus").textContent = `Local model · ${prediction.model_version}`;
+        $("riskStatusBadge").className = `badge ${badgeClass} risk-status-badge`;
+        $("riskStatusBadge").textContent = prediction.status_label;
+        $("riskRecommendation").textContent = prediction.recommended_action;
+        renderRiskDrivers(prediction.top_risk_drivers || []);
+      } catch (error) {
+        if (requestSequence !== riskRequestSequence) return;
+        showRiskModelUnavailable(error.message || "The local prediction service is unavailable.");
+      }
+    }
+    async function connectRiskModel() {
+      try {
+        const response = await fetch("predict.php", { headers: { "Accept": "application/json" }, cache: "no-store" });
+        const health = await response.json();
+        if (!response.ok || !health.loaded) throw new Error(health.error || "No locally trained model is available.");
+        riskModelAvailable = true;
+        $("riskModelRetry").hidden = true;
+        $("riskServiceStatus").textContent = `Local model · ${health.model_version}`;
+        renderRiskModelMetrics(health.evaluation);
+        await renderAcademicRiskPrediction();
+      } catch (error) {
+        showRiskModelUnavailable(error.message || "The local prediction service is unavailable.");
+      }
+    }
+    async function loadRiskSectionPresets() {
+      const container = $("riskSectionPresets");
+      const status = $("riskPresetStatus");
+      try {
+        const response = await fetch("sections.php", { headers: { "Accept": "application/json" }, cache: "no-store" });
+        const payload = await response.json();
+        if (!response.ok) throw new Error(payload.error || "Section data is unavailable.");
+        container.replaceChildren();
+        if (!payload.sections.length) {
+          status.textContent = "No eligible section aggregate with five or more students is available.";
+          container.append(status);
+          return;
+        }
+        payload.sections.forEach((section) => {
+          const button = document.createElement("button");
+          button.className = "risk-preset-button";
+          button.type = "button";
+          button.textContent = `Load Section ${section.section_code} · ${section.academic_year} ${section.semester}`;
+          button.addEventListener("click", () => {
+            RISK_INPUT_CONTROLS.forEach(({ key, inputId }) => {
+              $(inputId).value = section.inputs[key];
+            });
+            renderAcademicRiskPrediction();
+          });
+          container.append(button);
+        });
+      } catch (error) {
+        status.textContent = error.message || "Unable to load section profiles.";
+        container.replaceChildren(status);
+      }
     }
     let pendingPanelJump = null;
     let highlightedPanelJump = null;
@@ -3294,18 +3344,13 @@
       if (lastDashboardData) renderSectionSnapshot(lastDashboardData);
     });
     RISK_INPUT_CONTROLS.forEach(({ inputId }) => {
-      $(inputId).addEventListener("input", renderAcademicRiskPrediction);
-    });
-    document.querySelectorAll("[data-risk-preset]").forEach((button) => {
-      button.addEventListener("click", () => {
-        const preset = ACADEMIC_RISK_PRESETS[button.dataset.riskPreset];
-        if (!preset) return;
-        RISK_INPUT_CONTROLS.forEach(({ key, inputId }) => {
-          $(inputId).value = preset[key];
-        });
-        renderAcademicRiskPrediction();
+      $(inputId).addEventListener("input", () => {
+        riskInputsFromControls();
+        window.clearTimeout(riskInputTimer);
+        riskInputTimer = window.setTimeout(renderAcademicRiskPrediction, 180);
       });
     });
+    $("riskModelRetry").addEventListener("click", connectRiskModel);
     $("resetFilters").addEventListener("click", () => {
       $("yearLevelFilter").value = "All";
       $("yearFilter").value = "2025-2026";
@@ -3435,7 +3480,9 @@
       showView();
       updateActiveModule();
     });
-    renderAcademicRiskPrediction();
+    riskInputsFromControls();
+    loadRiskSectionPresets();
+    connectRiskModel();
     renderDashboard();
   </script>
 </body>
