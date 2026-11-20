@@ -1563,70 +1563,94 @@
       filters: {
         kicker: "FILTER HELP",
         title: "Dashboard Filters",
-        description: "This means these controls narrow the dashboard to the selected academic cohort. This helps you focus comparisons on a specific year, term, year level, track, or subject; use Reset Filters to return to the default view."
+        description: `• What it is: Controls for narrowing the dashboard to a specific academic group or period.
+• What it looks at: Academic year, semester, year level, track, and subject.
+• How it helps: Keeps KPI cards and charts focused on the same selection. Use Reset Filters to return to the default view.`
       },
       "kpi-late": {
         kicker: "KPI HELP",
         title: "Section Capacity Utilization",
-        description: "This means the metric shows enrolled students as a share of roster capacity for the selected sections. This helps identify sections that may need enrollment adjustments; its value and open-seat count update with the active filters."
+        description: `• What it is: The share of available seats currently filled.
+• What it looks at: Enrolled students and roster capacity in the filtered sections.
+• How it helps: Shows which sections are close to full and where seats remain open. The value and seat count follow the active filters.`
       },
       "kpi-coverage": {
         kicker: "KPI HELP",
         title: "CICS Semester Dropout Rate",
-        description: "This means the metric shows estimated dropouts divided by enrolled students across the selected sections. This helps identify where advising may be needed; section dropout allocations are illustrative and should be confirmed with registrar records."
+        description: `• What it is: The share of enrolled students recorded as dropouts in the selected sections.
+• What it looks at: Section dropout counts and enrollment for the active filters.
+• How it helps: Highlights sections that may need advising follow-up. Confirm counts with official registrar records.`
       },
       "kpi-passing": {
         kicker: "KPI HELP",
         title: "Student Passing Rate per Section",
-        description: "This means the metric shows the share of selected grade records marked as passing, independently of SETE participation. This helps identify academic outcomes that may need support; both the KPI and section chart use the active filters and illustrative sample grade records."
+        description: `• What it is: The share of grade records marked as passed.
+• What it looks at: Grade records for the currently filtered sections; it is separate from SETE participation.
+• How it helps: Points to sections whose academic outcomes may need review. The current dashboard grade records are illustrative samples.`
       },
       "kpi-facultyScore": {
         kicker: "KPI HELP",
         title: "SETE Composite Score",
-        description: "This means the metric summarizes teaching-effectiveness ratings on a five-point scale. This helps compare faculty feedback with the target, but should be considered alongside response coverage so low-turnout results are not overinterpreted."
+        description: `• What it is: The average SETE rating on a five-point scale.
+• What it looks at: Submitted ratings from sections with SETE results in the active selection.
+• How it helps: Summarizes student feedback. Read it alongside response rate, and do not use it alone to judge teaching.`
       },
       "kpi-response": {
         kicker: "KPI HELP",
         title: "SETE Response Rate per Section",
-        description: "This means the metric shows what share of invited students in the selected section assignments submitted a SETE response, not how highly they rated teaching. This helps assess how representative the feedback may be; the KPI and chart update with the active filters."
+        description: `• What it is: The share of invited students who submitted a SETE response; it is not a rating score.
+• What it looks at: Responses and invitations in the filtered sections.
+• How it helps: Shows how much student participation supports interpretation of SETE feedback. The value and chart follow the active filters.`
       },
       "panel-directory": {
         kicker: "PANEL HELP",
         title: "Section Capacity & Dropouts Directory",
-        description: "This means the directory lists each filtered section's year, track, capacity, open slots, and dropout count. This helps you find sections by section number, track, or assigned faculty; dropout allocations are illustrative and should be verified against official records."
+        description: `• What it is: A section-by-section directory of capacity and dropout information.
+• What it looks at: Section number, year, track, faculty, enrollment, open seats, and dropout count.
+• How it helps: Search for a section or faculty member and spot records that may need follow-up. Confirm dropout counts with official registrar records.`
       },
       "panel-passing": {
         kicker: "CHART HELP",
         title: "Passing Rate by Section",
-        description: "This means each mark compares a section's passing rate, ordered from lowest to highest. This helps reveal sections below the chart's 85% reference line; select a mark to inspect details. Chart records are illustrative samples."
+        description: `• What it is: A comparison of passing rates across sections; the dashed line marks the 85% reference.
+• What it looks at: Passed grade records for each section in the active filters. Sections are ordered by year, then section number.
+• How it helps: Spot outcomes for review and select a mark to inspect its section. The current grade records are illustrative samples.`
       },
       "panel-response": {
         kicker: "CHART HELP",
         title: "SETE Response Rate by Section",
-        description: "This means each bar compares a section's SETE participation, ordered from lowest to highest. This helps find sections below the 80% response target; counts show responses out of invitations, and selecting a bar opens details."
+        description: `• What it is: A comparison of student participation in SETE; the dashed line marks the 80% target.
+• What it looks at: Responses out of invitations for each section. Sections are ordered by year, then section number.
+• How it helps: Find sections with low participation and select a bar to inspect its details. Participation rate is not a teaching rating.`
       },
       "panel-coverage": {
         kicker: "CHART HELP",
         title: "SETE Rating Coverage",
-        description: "This means the ring compares sections with ratings against those still pending, while the bars show coverage by track. This helps locate gaps in evaluation coverage; select a ring segment to inspect its section records."
+        description: `• What it is: A view of sections with SETE ratings and sections still awaiting ratings.
+• What it looks at: Rating coverage overall and across tracks.
+• How it helps: Shows where evaluation coverage is incomplete. Select a chart segment to inspect the related section records.`
       },
       "panel-followup": {
         kicker: "PANEL HELP",
         title: "Immediate Follow-Up",
-        description: "This means section-subject items are ranked by overdue grade submissions and then low SETE response. This helps prioritize follow-up when either threshold is missed; select a row to inspect submission and response details."
+        description: `• What it is: A prioritized list of section and subject items that may need attention.
+• What it looks at: Overdue grade submissions and low SETE response rates.
+• How it helps: Helps decide which follow-ups to handle first. Select a row to see its submission and response details.`
       },
       "panel-trend": {
         kicker: "CHART HELP",
         title: "SETE Score and Response Trends",
-        description: "This means the chart tracks SETE mean scores and student response rates across terms up to the selected period. This helps you compare teaching feedback over time while checking participation, since low response coverage can make a mean score less representative."
+        description: `• What it is: A view of SETE rating and response patterns over academic terms.
+• What it looks at: Average SETE scores and student response rates for the selected filters and periods.
+• How it helps: Shows how feedback changes over time. Check participation alongside scores because low response can make results less representative.`
       },
       "panel-risk-predictor": {
         kicker: "MODEL HELP",
         title: "Academic Difficulty Risk Predictor",
-        description: `• What it does: Estimates the likelihood that students in a section need early academic support (such as advising or peer tutoring) before final grades are locked in.
-• What it looks at: Midterm grade average, class attendance, missing portal submissions, section class size, and SETE participation rate.
-• How to read the score: Below 35% is Low (on track), 35%–64% is Moderate (early warning), and 65% or higher is High (priority intervention).
-• Responsible use: Acts as an early-warning guide, not a final grade prediction. SETE engagement is used strictly for student/instructional support and never to evaluate faculty.`
+        description: `• What it is: An early-warning estimate of whether students in a section may need academic support.
+• What it looks at: Midterm grades, attendance, missing portal submissions, section capacity, and SETE participation.
+• How it helps: Supports earlier advising or tutoring. Below 35% is Low, 35%–64% is Moderate, and 65% or higher is High risk.
+• Responsible use: This prototype uses synthetic CICS data; it is not a final grade prediction. SETE participation is for student and instructional support only, never faculty evaluation.`
       }
     };
     const ONBOARDING_TOUR_STEPS = [
