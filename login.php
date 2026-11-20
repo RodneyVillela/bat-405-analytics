@@ -8,7 +8,8 @@ if (currentUser() !== null) {
 }
 
 $error = '';
-$email = '';
+$demoEmail = 'admin@gmail.com';
+$email = $demoEmail;
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (!verifyCsrfToken()) {
         http_response_code(400);
@@ -81,6 +82,7 @@ $token = csrfToken();
         .brand-subtitle { margin-top: 2px; color: var(--muted); font-size: 10px; }
         h1 { margin: 0; text-align: center; color: #334155; font-size: 1.65rem; letter-spacing: -.04em; }
         .intro { margin: 8px 0 28px; color: #64748b; text-align: center; font-size: .9rem; }
+        .demo-note { margin: -16px 0 18px; color: var(--red); text-align: center; font-size: .72rem; font-weight: 650; }
         label { display: block; margin: 16px 0 7px; color: #475569; font-size: .82rem; font-weight: 650; }
         input { width: 100%; height: 46px; border: 1px solid #cbd5e1; border-radius: 8px; padding: 0 13px; background: #fff; color: #334155; font: inherit; font-size: .9rem; }
         input::placeholder { color: #94a3b8; }
@@ -127,6 +129,7 @@ $token = csrfToken();
         </div>
         <h1 id="signInTitle">Sign in</h1>
         <p class="intro">Sign in to your CICS Program Chair workspace.</p>
+        <p class="demo-note">Prototype demo account · Email is prefilled; enter the shared password to sign in.</p>
         <?php if ($error !== ''): ?>
             <p class="error" role="alert"><?= escapeHtml($error) ?></p>
         <?php endif; ?>

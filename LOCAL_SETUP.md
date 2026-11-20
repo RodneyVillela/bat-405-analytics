@@ -13,8 +13,10 @@ presets. Open the dashboard through the PHP sign-in flow; do not open
    `migrations/002_spartan_insight_risk_training.sql` to add the predictor
    training table. The migration does not replace your CICS tables.
 3. Keep the existing `bat405_analytics` setup for logins and the dashboard API.
-   Create the local Program Chair login with
-   `C:\\xampp\\php\\php.exe create_user.php chair@example.edu "Program Chair"`.
+   For a fresh prototype database, create the shared Program Chair demo account
+   with `C:\\xampp\\php\\php.exe create_user.php admin@gmail.com "Program Chair"`.
+   Enter the shared prototype password at the secure prompt. The login form
+   pre-fills the demo email; reviewers enter the shared password at sign-in.
 4. For a non-default MySQL account or port, configure `SPARTAN_DB_HOST`,
    `SPARTAN_DB_PORT`, `SPARTAN_DB_NAME`, `SPARTAN_DB_USER`, and
    `SPARTAN_DB_PASSWORD` for PHP and Python. The defaults target local XAMPP
