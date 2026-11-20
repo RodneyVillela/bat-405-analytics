@@ -1092,7 +1092,7 @@
         <section class="viz-grid" aria-label="BAT 405 Part III visualizations">
           <article class="panel viz-panel kpi-jump-target" id="passing-by-section">
             <div class="panel-head">
-              <div><h2 class="panel-title">Student Passing Rate per Section</h2><div class="panel-description">Section comparison against the 85% target; click any bar to inspect details.</div><span class="term-tag" id="passingChartTerm"></span></div>
+              <div><h2 class="panel-title">Student Passing Rate per Section</h2><div class="panel-description">Sections are grouped by year level (1st–4th); lower rates appear first within each year.</div><span class="term-tag" id="passingChartTerm"></span></div>
               <button class="contextual-help-btn" type="button" data-contextual-help="panel-passing" aria-label="Help: Student Passing Rate chart" title="Explain passing-rate chart">?</button>
             </div>
             <div class="panel-body">
@@ -1103,13 +1103,13 @@
                 <span><i class="legend-green"></i>On target</span>
                 <span><i class="legend-dashed"></i>85% target</span>
               </div>
-              <div class="chart-footnote">Hardcoded sample passing records are sorted from lowest to highest. Select a mark to inspect its section.</div>
+              <div class="chart-footnote">Compare section passing rates with the 85% target. Select a mark to inspect its section.</div>
             </div>
           </article>
 
           <article class="panel viz-panel response-panel kpi-jump-target" id="response-by-section">
             <div class="panel-head">
-              <div><h2 class="panel-title">SETE Response Rate per Section</h2><div class="panel-description">Lowest response rates appear first; bars compare each section with the 80% target.</div><span class="term-tag" id="responseChartTerm"></span></div>
+              <div><h2 class="panel-title">SETE Response Rate per Section</h2><div class="panel-description">Sections are grouped by year level (1st–4th); lower rates appear first within each year.</div><span class="term-tag" id="responseChartTerm"></span></div>
               <button class="contextual-help-btn" type="button" data-contextual-help="panel-response" aria-label="Help: SETE Response Rate chart" title="Explain response-rate chart">?</button>
             </div>
             <div class="panel-body">
@@ -2729,7 +2729,7 @@
         const passed = records.filter((record) => record.passed).length;
         return { ...section, total: records.length, rate: percent(passed, records.length) };
       }).sort((first, second) =>
-        first.rate - second.rate || first.id.localeCompare(second.id)
+        first.yearLevel - second.yearLevel || first.rate - second.rate || first.id.localeCompare(second.id)
       );
       const rows = passingShowAll ? allRows : allRows.slice(0, 10);
       const target = 85;
@@ -2786,7 +2786,7 @@
           rate: percent(responseCount, invitedCount)
         };
       }).sort((first, second) =>
-        first.rate - second.rate || first.id.localeCompare(second.id)
+        first.yearLevel - second.yearLevel || first.rate - second.rate || first.id.localeCompare(second.id)
       );
       const rows = responseShowAll ? allRows : allRows.slice(0, 10);
       const target = 80;
