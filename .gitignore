@@ -9,4 +9,4 @@ __pycache__/
 *.py[cod]
 ml/artifacts/*.joblib
 ml/artifacts/*.json
-data/academic_risk_training.csv
+data/public_source/

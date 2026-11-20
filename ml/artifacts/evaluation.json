@@ -1,0 +1,34 @@
+{
+  "model": "Logistic Regression",
+  "model_version": "cics-risk-logreg-v2",
+  "training_database": "spartan_insight",
+  "training_table": "academic_risk_training_records",
+  "training_source": "SYNTHETIC_CICS_DB",
+  "synthetic_prototype_data": true,
+  "interpretation_notice": "Prototype simulation only: features and target labels are synthetic; metrics do not measure real student outcomes.",
+  "training_records": 500,
+  "unique_students": 500,
+  "holdout_records": 100,
+  "holdout_students": 100,
+  "positive_outcome": "academic_difficulty_outcome = 1",
+  "evaluation_threshold": 0.5,
+  "accuracy": 0.8,
+  "precision": 0.6818,
+  "recall": 0.5357,
+  "roc_auc": 0.8269,
+  "validation_method": "One held-out fold from stratified five-fold splits, grouped by student_key",
+  "trained_at_utc": "2026-11-20T06:27:17.779501+00:00",
+  "features": [
+    "midtermGrade",
+    "attendanceRate",
+    "missingTasks",
+    "capacityUtilization",
+    "seteEngagement"
+  ],
+  "outcome_definition": "Synthetic prototype label sampled from a five-feature difficulty-risk rule; not an observed student outcome.",
+  "risk_bands": {
+    "low_below": 0.35,
+    "moderate_below": 0.65,
+    "high_from": 0.65
+  }
+}

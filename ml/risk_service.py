@@ -18,25 +18,25 @@ ARTIFACT_DIR = ROOT / "ml" / "artifacts"
 MODEL_PATH = ARTIFACT_DIR / "academic_risk_model.joblib"
 METRICS_PATH = ARTIFACT_DIR / "evaluation.json"
 FEATURES = [
-    "midterm_grade_average",
-    "attendance_rate",
-    "missing_portal_submissions",
-    "section_capacity_utilization",
-    "sete_response_rate",
+    "midtermGrade",
+    "attendanceRate",
+    "missingTasks",
+    "capacityUtilization",
+    "seteEngagement",
 ]
 LABELS = {
-    "midterm_grade_average": "Midterm grade average",
-    "attendance_rate": "Class attendance rate",
-    "missing_portal_submissions": "Missing / late portal submissions",
-    "section_capacity_utilization": "Section capacity utilization",
-    "sete_response_rate": "SETE section response rate",
+    "midtermGrade": "Midterm grade average",
+    "attendanceRate": "Class attendance rate",
+    "missingTasks": "Missing / late portal submissions",
+    "capacityUtilization": "Section capacity utilization",
+    "seteEngagement": "SETE section response rate",
 }
 BOUNDS = {
-    "midterm_grade_average": (60, 100),
-    "attendance_rate": (50, 100),
-    "missing_portal_submissions": (0, 10),
-    "section_capacity_utilization": (70, 110),
-    "sete_response_rate": (40, 100),
+    "midtermGrade": (60, 100),
+    "attendanceRate": (50, 100),
+    "missingTasks": (0, 10),
+    "capacityUtilization": (70, 110),
+    "seteEngagement": (40, 100),
 }
 
 
@@ -78,7 +78,7 @@ def predict(bundle: dict, inputs: dict[str, object]) -> dict[str, object]:
             raise ValueError(f"{LABELS[feature]} must be numeric.") from None
         if not math.isfinite(value) or not minimum <= value <= maximum:
             raise ValueError(f"{LABELS[feature]} must be from {minimum} to {maximum}.")
-        if feature == "missing_portal_submissions" and not value.is_integer():
+        if feature == "missingTasks" and not value.is_integer():
             raise ValueError("Missing / late portal submissions must be a whole number.")
         values[feature] = value
 
@@ -143,7 +143,7 @@ class RiskRequestHandler(BaseHTTPRequestHandler):
             return
         bundle, _metrics = load_artifacts()
         if bundle is None:
-            self.send_json(503, {"error": "No locally trained model is available. Add labeled CICS data and train the model first."})
+            self.send_json(503, {"error": "No local model is available. Generate/import a dataset and train the model first."})
             return
         try:
             length = int(self.headers.get("Content-Length", "0"))

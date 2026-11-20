@@ -1,48 +1,59 @@
 # Local SpartanInsight360 setup
 
-The dashboard, PHP/MySQL backend, training scripts, and model service are in
-this repository. Run the dashboard behind the PHP sign-in flow; do not open
+The dashboard login and application permissions use `bat405_analytics`. The
+Academic Difficulty Risk Predictor uses the supplied `spartan_insight` CICS
+database for section and SETE aggregates, synthetic training rows, and section
+presets. Open the dashboard through the PHP sign-in flow; do not open
 `index.html` directly.
 
-## One-time database setup
+## Database setup
 
-1. Start MySQL from XAMPP.
-2. Import `database.sql` into MySQL. It contains the application schema but
-   intentionally contains no sample student or faculty records.
-3. If `bat405_analytics` already exists, apply
-   `migrations/001_academic_risk_training.sql` instead of recreating the base
-   schema.
-4. Configure `BAT405_DB_HOST`, `BAT405_DB_NAME`, `BAT405_DB_USER`,
-   `BAT405_DB_PASSWORD`, and optionally `BAT405_DB_PORT` for both PHP and
-   Python. The defaults match a local XAMPP MySQL setup.
-5. Create the local Program Chair login using the existing CLI helper:
-   `php create_user.php chair@example.edu "Program Chair"`.
+1. Start Apache and MySQL from XAMPP.
+2. Keep your existing `spartan_insight` tables and apply
+   `migrations/002_spartan_insight_risk_training.sql` to add the predictor
+   training table. The migration does not replace your CICS tables.
+3. Keep the existing `bat405_analytics` setup for logins and the dashboard API.
+   Create the local Program Chair login with
+   `C:\\xampp\\php\\php.exe create_user.php chair@example.edu "Program Chair"`.
+4. For a non-default MySQL account or port, configure `SPARTAN_DB_HOST`,
+   `SPARTAN_DB_PORT`, `SPARTAN_DB_NAME`, `SPARTAN_DB_USER`, and
+   `SPARTAN_DB_PASSWORD` for PHP and Python. The defaults target local XAMPP
+   MySQL as `root` with no password and database `spartan_insight`.
 
-## Import and train
+## Generate, import, and train the prototype
 
-1. Add the de-identified, labeled file as
-   `data/academic_risk_training.csv`, using
-   `data/academic_risk_training_template.csv` as the exact header.
-2. Confirm the target label uses one consistent, institution-approved
-   `outcome_definition`. Do not include names, student numbers, comments, or
-   other direct identifiers.
-3. Import the CSV into MySQL with `php import_risk_data.php`.
-4. Install Python packages in the isolated project environment:
-   `.venv\\Scripts\\python.exe -m pip install -r requirements.txt`.
-5. Train and evaluate the model:
-   `.venv\\Scripts\\python.exe ml\\train_model.py`.
+The supplied SQL includes section enrollment/capacity and SETE participation
+aggregates, but it has no student-level midterm grades, attendance, missing
+student submissions, or verified academic difficulty labels. The following
+pipeline uses the real section codes and capacity/SETE aggregates as context,
+then simulates 500 row-level feature sets and labels. Those labels are not
+documented student outcomes. This is a software prototype and its metrics must
+not be presented as validated performance on actual students.
 
-The training script requires at least five distinct student keys in each
-outcome class and performs a stratified five-fold holdout grouped by student.
-It writes the local model and actual holdout metrics to `ml/artifacts/`.
-Training data, model artifacts, and metrics are ignored by Git.
+From the project root in PowerShell, run:
+
+```powershell
+.venv\\Scripts\\python.exe ml\\generate_synthetic_cics_data.py
+php import_risk_data.php
+.venv\\Scripts\\python.exe ml\\train_model.py
+```
+
+The generated `data/academic_risk_training.csv` has the five model features
+`midtermGrade`, `attendanceRate`, `missingTasks`, `capacityUtilization`, and
+`seteEngagement`, plus the binary `academic_difficulty_outcome` and metadata.
+The capacity and SETE values are based on the `spartan_insight` section-term
+aggregates. The remaining student-level inputs and target are simulated.
+Training writes the local model and held-out synthetic evaluation to
+`ml/artifacts/`; those machine-generated files are ignored by Git. To use another
+dataset key later, set `RISK_TRAINING_SOURCE` for PHP and use
+`--source DATASET_KEY` with the trainer.
 
 ## Run the dashboard and local model
 
 Open two terminals in the repository root:
 
 ```powershell
-.venv\Scripts\python.exe ml\risk_service.py
+.venv\\Scripts\\python.exe ml\\risk_service.py
 ```
 
 ```powershell
@@ -51,6 +62,10 @@ php -S 127.0.0.1:8080
 
 Open `http://127.0.0.1:8080/welcome.php`, sign in, and use the dashboard. The
 PHP prediction endpoint proxies authenticated requests to the Python service
-on `127.0.0.1:8765`. The Python service only binds to loopback. If no trained
-model is present, the dashboard reports that state and displays no probability
-or unsupported performance metrics.
+on `127.0.0.1:8765`. The Python service binds to loopback only. The Risk
+Predictor UI labels its data and holdout metrics as synthetic prototype results.
+
+To replace the prototype with real CICS training, provide approved,
+de-identified rows with the same five features and a verified academic outcome
+label, import them into this table with a distinct `source_dataset`, and retrain
+against that dataset key. Do not mix real outcomes with simulated labels.

@@ -539,6 +539,7 @@
     .risk-panel-heading { display: flex; width: 100%; align-items: flex-start; justify-content: space-between; gap: 16px; }
     .risk-panel-heading .contextual-help-btn { margin-left: 0; }
     .risk-panel-subtitle { margin-top: 4px; color: var(--muted); font-size: 10px; }
+    .risk-prototype-note { margin: 0 19px 15px; padding: 9px 12px; border: 1px solid #e8d9bd; border-radius: 8px; background: #fffaf0; color: #775a28; font-size: 10px; line-height: 1.5; }
     .risk-predictor-grid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 18px; padding: 0 19px 19px; }
     .risk-simulator-column, .risk-output-column { min-width: 0; }
     .risk-tool-section { padding: 16px; border: 1px solid var(--line); border-radius: 11px; background: #fff; }
@@ -584,6 +585,7 @@
       .risk-tool-section { padding: 13px; }
       .risk-preset-buttons { display: grid; }
       .risk-responsible-notice { margin: 0 14px 14px; }
+      .risk-prototype-note { margin: 0 14px 13px; }
       .risk-score-row { align-items: flex-start; flex-direction: column; }
       .risk-status-badge { text-align: left; }
     }
@@ -1177,10 +1179,11 @@
               <button class="contextual-help-btn" type="button" data-contextual-help="panel-risk-predictor" aria-label="Help: Academic Difficulty Risk Predictor" title="Explain the risk model">?</button>
             </div>
           </div>
+          <div class="risk-prototype-note"><strong>Synthetic CICS prototype:</strong> The model is fitted to 500 simulated records seeded from this database’s section capacity and SETE aggregates. Student-level grades, attendance, missing-task counts, and difficulty labels are simulated; results are not validated predictions about actual students.</div>
           <div class="risk-predictor-grid">
             <section class="risk-tool-section risk-simulator-column" aria-labelledby="riskSimulatorTitle">
               <h3 class="risk-section-title" id="riskSimulatorTitle">Interactive Simulator</h3>
-              <p class="risk-section-copy">Adjust a what-if scenario or load the latest eligible section aggregate from MySQL.</p>
+                <p class="risk-section-copy">Adjust a what-if scenario or load a section profile based on the local MySQL aggregates.</p>
               <div class="risk-preset-buttons" id="riskSectionPresets" aria-label="Load section profiles">
                 <span class="risk-service-status" id="riskPresetStatus" aria-live="polite">Checking section data…</span>
               </div>
@@ -1237,8 +1240,8 @@
               </div>
               <div class="risk-model-summary">
                 <div class="risk-model-label">Model Validation Summary</div>
-                <p id="riskModelMetrics">No trained model or evaluation metrics are available. Import the approved CICS records and train the local model.</p>
-                <small id="riskModelDetails">Performance values will appear here only after evaluation on a held-out set of real records.</small>
+                <p id="riskModelMetrics">No trained prototype model or evaluation metrics are available. Generate/import the local synthetic CICS prototype data and train the model.</p>
+                <small id="riskModelDetails">Prototype evaluation results describe a held-out synthetic sample only; they do not measure real student outcomes.</small>
               </div>
             </section>
           </div>
@@ -1362,11 +1365,11 @@
       "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;"
     })[char]);
     const RISK_INPUT_CONTROLS = [
-      { key: "midterm_grade_average", inputId: "riskMidtermGrade", outputId: "riskMidtermGradeValue", suffix: "%" },
-      { key: "attendance_rate", inputId: "riskAttendanceRate", outputId: "riskAttendanceRateValue", suffix: "%" },
-      { key: "missing_portal_submissions", inputId: "riskMissingTasks", outputId: "riskMissingTasksValue", suffix: " tasks" },
-      { key: "section_capacity_utilization", inputId: "riskCapacityUtilization", outputId: "riskCapacityUtilizationValue", suffix: "%" },
-      { key: "sete_response_rate", inputId: "riskSeteEngagement", outputId: "riskSeteEngagementValue", suffix: "%" }
+      { key: "midtermGrade", inputId: "riskMidtermGrade", outputId: "riskMidtermGradeValue", suffix: "%" },
+      { key: "attendanceRate", inputId: "riskAttendanceRate", outputId: "riskAttendanceRateValue", suffix: "%" },
+      { key: "missingTasks", inputId: "riskMissingTasks", outputId: "riskMissingTasksValue", suffix: " tasks" },
+      { key: "capacityUtilization", inputId: "riskCapacityUtilization", outputId: "riskCapacityUtilizationValue", suffix: "%" },
+      { key: "seteEngagement", inputId: "riskSeteEngagement", outputId: "riskSeteEngagementValue", suffix: "%" }
     ];
     let riskModelAvailable = false;
     let riskRequestSequence = 0;
@@ -1386,8 +1389,8 @@
       $("riskStatusBadge").className = "badge badge-watch risk-status-badge";
       $("riskStatusBadge").textContent = "Model unavailable";
       $("riskRecommendation").textContent = "Predictions are unavailable until the local model is trained and running.";
-      $("riskModelMetrics").textContent = "No trained model or evaluation metrics are available. Import the approved CICS records and train the local model.";
-      $("riskModelDetails").textContent = "Performance values appear only after evaluation on a held-out set of real records.";
+      $("riskModelMetrics").textContent = "No trained prototype model or evaluation metrics are available. Generate/import the local synthetic CICS prototype data and train the model.";
+      $("riskModelDetails").textContent = "Prototype evaluation results describe a held-out synthetic sample only; they do not measure real student outcomes.";
       $("riskDrivers").replaceChildren();
       const note = document.createElement("div");
       note.className = "risk-service-status";
@@ -1396,8 +1399,9 @@
     }
     function renderRiskModelMetrics(evaluation) {
       const percent = (value) => `${(Number(value) * 100).toFixed(1)}%`;
-      $("riskModelMetrics").textContent = `Model: Logistic Regression · CICS records: n = ${evaluation.training_records} · Holdout: n = ${evaluation.holdout_records} · Accuracy: ${percent(evaluation.accuracy)} · Precision: ${percent(evaluation.precision)} · Recall: ${percent(evaluation.recall)} · ROC-AUC: ${Number(evaluation.roc_auc).toFixed(3)}`;
-      $("riskModelDetails").textContent = `Holdout threshold ${(Number(evaluation.evaluation_threshold) * 100).toFixed(0)}% · Display bands: <35% / 35–64% / ≥65% · Grouped by student · ${evaluation.outcome_definition} · Model ${evaluation.model_version}`;
+      const datasetLabel = evaluation.synthetic_prototype_data ? "Synthetic CICS prototype" : evaluation.training_source;
+      $("riskModelMetrics").textContent = `Model: Logistic Regression · Dataset: ${datasetLabel} · n = ${evaluation.training_records} · Holdout: n = ${evaluation.holdout_records} · Accuracy: ${percent(evaluation.accuracy)} · Precision: ${percent(evaluation.precision)} · Recall: ${percent(evaluation.recall)} · ROC-AUC: ${Number(evaluation.roc_auc).toFixed(3)}`;
+      $("riskModelDetails").textContent = `${evaluation.interpretation_notice} Outcome: ${evaluation.outcome_definition} · Model ${evaluation.model_version}`;
     }
     function renderRiskDrivers(drivers) {
       const container = $("riskDrivers");
