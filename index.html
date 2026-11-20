@@ -1061,7 +1061,7 @@
             <div class="kpi-label">Student Passing Rate per Section</div>
             <div class="kpi-value" id="kpiPassingValue">Calculating…</div>
             <div class="kpi-status" id="kpiPassingStatus">Calculating status</div>
-            <div class="kpi-target">Target: &gt; 80%</div>
+            <div class="kpi-target">Target: &ge; 80%</div>
             <div class="kpi-count" id="kpiPassingCount"></div>
             <button class="kpi-link" type="button" data-kpi="passing" data-kpi-target="passing-by-section">View chart <span aria-hidden="true">→</span></button>
           </article>
@@ -1070,7 +1070,7 @@
             <div class="kpi-label">SETE Composite Score</div>
             <div class="kpi-value" id="kpiFacultyScoreValue">Calculating…</div>
             <div class="kpi-status" id="kpiFacultyScoreStatus">Calculating status</div>
-            <div class="kpi-target">Target: &gt; 4.0</div>
+            <div class="kpi-target">Target: &ge; 4.0</div>
             <div class="kpi-count" id="kpiFacultyScoreCount"></div>
             <button class="kpi-link" type="button" data-kpi="facultyScore" data-kpi-target="sete-coverage">View chart <span aria-hidden="true">→</span></button>
           </article>
@@ -1079,14 +1079,14 @@
             <div class="kpi-label">SETE Response Rate per Section</div>
             <div class="kpi-value" id="kpiResponseValue">Calculating…</div>
             <div class="kpi-status" id="kpiResponseStatus">Calculating status</div>
-            <div class="kpi-target">Target: &gt; 75%</div>
+            <div class="kpi-target">Target: &ge; 75%</div>
             <div class="kpi-count" id="kpiResponseCount"></div>
             <button class="kpi-link" type="button" data-kpi="response" data-kpi-target="response-by-section">View chart <span aria-hidden="true">→</span></button>
           </article>
         </section>
 
         <p class="simulation-note">
-          KPI summaries reflect the Program Chair figures provided for this dashboard. Existing chart records remain illustrative hardcoded samples and are not official institutional data.
+          All five KPI summaries and charts update to reflect the active year, semester, year-level, track, and subject filters; the semester trend ends at the selected term. Dashboard records are illustrative samples, not official institutional data.
         </p>
 
         <section class="viz-grid" aria-label="BAT 405 Part III visualizations">
@@ -1568,17 +1568,17 @@
       "kpi-late": {
         kicker: "KPI HELP",
         title: "Section Capacity Utilization",
-        description: "This means the metric shows how much of a section's capacity is in use. This helps identify sections that may need enrollment adjustments; the displayed 98% and waitlist summary are supplied Program Chair figures."
+        description: "This means the metric shows enrolled students as a share of roster capacity for the selected sections. This helps identify sections that may need enrollment adjustments; its value and open-seat count update with the active filters."
       },
       "kpi-coverage": {
         kicker: "KPI HELP",
         title: "CICS Semester Dropout Rate",
-        description: "This means the metric shows the share of enrolled students reported as dropped during the semester. This helps identify where advising may be needed; the summary reports 18 of 428 students, while section allocations are illustrative and should be confirmed with registrar records."
+        description: "This means the metric shows estimated dropouts divided by enrolled students across the selected sections. This helps identify where advising may be needed; section dropout allocations are illustrative and should be confirmed with registrar records."
       },
       "kpi-passing": {
         kicker: "KPI HELP",
         title: "Student Passing Rate per Section",
-        description: "This means the metric shows the share of grade records marked as passing, independently of SETE participation. This helps identify academic outcomes that may need support; the KPI summary is supplied separately and the section chart uses illustrative sample grade records."
+        description: "This means the metric shows the share of selected grade records marked as passing, independently of SETE participation. This helps identify academic outcomes that may need support; both the KPI and section chart use the active filters and illustrative sample grade records."
       },
       "kpi-facultyScore": {
         kicker: "KPI HELP",
@@ -1588,7 +1588,7 @@
       "kpi-response": {
         kicker: "KPI HELP",
         title: "SETE Response Rate per Section",
-        description: "This means the metric shows what share of invited students submitted a SETE response, not how highly they rated teaching. This helps assess how representative the feedback may be; the KPI summary is supplied separately and the section chart uses selected sample records."
+        description: "This means the metric shows what share of invited students in the selected section assignments submitted a SETE response, not how highly they rated teaching. This helps assess how representative the feedback may be; the KPI and chart update with the active filters."
       },
       "panel-directory": {
         kicker: "PANEL HELP",
@@ -2181,76 +2181,112 @@
       const overduePendingCount = data.submissions.filter((record) =>
         record.status === "Pending" && record.overdue
       ).length;
-      const responseCount = data.responses.reduce((sum, record) => sum + record.responses, 0);
-      const invitedCount = data.responses.reduce((sum, record) => sum + record.invited, 0);
+      const responseCount = data.responses.reduce((sum, record) => sum + (Number(record.responses) || 0), 0);
+      const invitedCount = data.responses.reduce((sum, record) => sum + (Number(record.invited) || 0), 0);
       const passCount = data.grades.filter((record) => record.passed).length;
       const ratedSections = data.sections.filter((section) => section.rated);
       const ratedSectionIds = new Set(ratedSections.map((section) => section.id));
       const ratedFaculty = new Set(data.assignments
         .filter((assignment) => ratedSectionIds.has(assignment.sectionId))
         .map((assignment) => assignment.facultyId));
+      const totalEnrolled = data.sections.reduce((sum, section) => sum + (Number(section.enrolled) || 0), 0);
+      const totalCapacity = data.sections.reduce((sum, section) => sum + (Number(section.roster) || 0), 0);
+      const capacityUtilization = percent(totalEnrolled, totalCapacity);
+      const totalOpenSlots = Math.max(0, totalCapacity - totalEnrolled);
+      const totalDropouts = data.sections.reduce((sum, section) => sum + sectionDropoutCount(section), 0);
+      const dropoutRate = percent(totalDropouts, totalEnrolled);
+      const passingRate = percent(passCount, data.grades.length);
+      const facultyScore = ratedSections.length
+        ? ratedSections.reduce((sum, section) => sum + (Number(section.score) || 0), 0) / ratedSections.length
+        : null;
+      const responseRate = percent(responseCount, invitedCount);
+      const responseBySection = new Map();
+      data.responses.forEach((record) => {
+        const sectionMetrics = responseBySection.get(record.sectionId) || { responses: 0, invited: 0 };
+        sectionMetrics.responses += Number(record.responses) || 0;
+        sectionMetrics.invited += Number(record.invited) || 0;
+        responseBySection.set(record.sectionId, sectionMetrics);
+      });
+      const lowTurnoutSections = data.sections.filter((section) => {
+        const sectionMetrics = responseBySection.get(section.id);
+        return sectionMetrics && sectionMetrics.invited > 0 &&
+          percent(sectionMetrics.responses, sectionMetrics.invited) < 75;
+      }).length;
       const totalCoverageCount = data.sections.length;
       const ratedCoverageCount = ratedSections.length;
       const unratedCoverageCount = totalCoverageCount - ratedCoverageCount;
       const kpis = {
         late: {
           title: "Section Capacity Utilization",
-          value: 98,
-          displayValue: "98%",
-          count: "12 Waitlisted – Open Slots Needed",
+          value: capacityUtilization,
+          displayValue: `${capacityUtilization.toFixed(1)}%`,
+          count: `${totalEnrolled} Enrolled / ${totalCapacity} Capacity (${totalOpenSlots} open slots)`,
           target: 95,
           targetText: "85%–95%",
           higherIsBetter: false,
-          status: "critical"
+          status: capacityUtilization > 95 ? "critical" : capacityUtilization < 85 ? "warning" : "on-target"
         },
         response: {
           title: "SETE Response Rate per Section",
-          value: 68,
-          displayValue: "68%",
-          count: "Low turnout in 3 sections",
+          value: responseRate,
+          displayValue: `${responseRate.toFixed(1)}%`,
+          count: `Low turnout in ${lowTurnoutSections} section(s) · ${responseCount} / ${invitedCount} responses`,
           target: 75,
-          targetText: "> 75%",
+          targetText: "≥ 75%",
           higherIsBetter: true,
-          status: "warning"
+          status: responseRate >= 75 ? "on-target" : responseRate >= 65 ? "warning" : "critical",
+          lowTurnoutSections
         },
         passing: {
           title: "Student Passing Rate per Section",
-          value: 84.5,
-          displayValue: "84.5%",
-          count: "Distinct from SETE response rate",
+          value: passingRate,
+          displayValue: `${passingRate.toFixed(1)}%`,
+          count: `${passCount} Passed / ${data.grades.length} Grade Records`,
           target: 80,
-          targetText: "> 80%",
+          targetText: "≥ 80%",
           higherIsBetter: true,
-          status: "on-target"
+          status: passingRate >= 80 ? "on-target" : passingRate >= 70 ? "warning" : "critical"
         },
         coverage: {
           title: "CICS Semester Dropout Rate",
-          value: 4.2,
-          displayValue: "4.2%",
-          count: "18 Dropped / 428 Enrolled across Year Levels",
+          value: dropoutRate,
+          displayValue: `${dropoutRate.toFixed(1)}%`,
+          count: `${totalDropouts} Dropped / ${totalEnrolled} Enrolled in selection`,
           target: 5,
           targetText: "< 5.0%",
           higherIsBetter: false,
-          status: "on-target",
+          status: dropoutRate < 5 ? "on-target" : dropoutRate <= 10 ? "warning" : "critical",
           ratedCount: ratedCoverageCount,
           unratedCount: unratedCoverageCount,
           totalCount: totalCoverageCount,
         },
         facultyScore: {
           title: "SETE Composite Score",
-          value: 4.32,
-          displayValue: "4.32 / 5.0",
-          count: "Faculty Teaching Effectiveness",
+          value: facultyScore ?? 0,
+          displayValue: facultyScore === null ? "N/A" : `${facultyScore.toFixed(2)} / 5.0`,
+          count: `Across ${ratedSections.length} rated section(s) · ${ratedFaculty.size} faculty`,
           target: 4,
-          targetText: "> 4.0",
+          targetText: "≥ 4.0",
           higherIsBetter: true,
           scale: 5,
-          status: "on-target",
+          status: facultyScore !== null && facultyScore >= 4 ? "on-target" : facultyScore !== null && facultyScore >= 3.5 ? "warning" : "critical",
           ratedSections: ratedCoverageCount,
           facultyCount: ratedFaculty.size,
         }
       };
-      return { ...kpis, lateCount, overduePendingCount, responseCount, invitedCount, passCount, ratedFaculty };
+      return {
+        ...kpis,
+        lateCount,
+        overduePendingCount,
+        responseCount,
+        invitedCount,
+        passCount,
+        totalEnrolled,
+        totalCapacity,
+        totalDropouts,
+        lowTurnoutSections,
+        ratedFaculty
+      };
     }
 
     function renderKpis(metrics) {
@@ -2900,6 +2936,7 @@
       const series = visibleTerms.map((termKey) => {
         const termAssignments = sectionAssignmentsByTerm[termKey]
           .filter((record) =>
+            (data.yearLevel === "All" || String(record.yearLevel) === data.yearLevel) &&
             (data.track === "All" || record.track === data.track) &&
             (data.subject === "All" || record.subject === data.subject)
           );
