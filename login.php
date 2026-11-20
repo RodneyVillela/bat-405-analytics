@@ -8,7 +8,16 @@ if (currentUser() !== null) {
 }
 
 $error = '';
-$demoEmail = 'admin@gmail.com';
+$demoCredentials = [];
+$demoCredentialsPath = __DIR__ . '/runtime/demo_credentials.php';
+if (is_file($demoCredentialsPath)) {
+    $configuredDemoCredentials = require $demoCredentialsPath;
+    if (is_array($configuredDemoCredentials)) {
+        $demoCredentials = $configuredDemoCredentials;
+    }
+}
+$demoEmail = getenv('SPARTAN_DEMO_EMAIL') ?: (string) ($demoCredentials['email'] ?? 'admin@gmail.com');
+$demoPassword = getenv('SPARTAN_DEMO_PASSWORD') ?: (string) ($demoCredentials['password'] ?? '');
 $email = $demoEmail;
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (!verifyCsrfToken()) {
@@ -129,7 +138,7 @@ $token = csrfToken();
         </div>
         <h1 id="signInTitle">Sign in</h1>
         <p class="intro">Sign in to your CICS Program Chair workspace.</p>
-        <p class="demo-note">Prototype demo account · Email is prefilled; enter the shared password to sign in.</p>
+        <p class="demo-note">Prototype demo account · Sign-in fields are prefilled when local demo credentials are configured.</p>
         <?php if ($error !== ''): ?>
             <p class="error" role="alert"><?= escapeHtml($error) ?></p>
         <?php endif; ?>
@@ -139,7 +148,7 @@ $token = csrfToken();
             <input id="email" name="email" type="email" autocomplete="username" required maxlength="254"
                    value="<?= escapeHtml($email) ?>" placeholder="name@example.edu">
             <label for="password">Password</label>
-            <input id="password" name="password" type="password" autocomplete="current-password" required maxlength="1024">
+            <input id="password" name="password" type="password" autocomplete="current-password" required maxlength="1024" value="<?= escapeHtml($demoPassword) ?>">
             <button class="submit" type="submit">Sign in to SpartanInsight</button>
         </form>
         <a class="back" href="welcome.php">Back to welcome</a>

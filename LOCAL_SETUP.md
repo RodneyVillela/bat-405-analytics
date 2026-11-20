@@ -15,8 +15,10 @@ presets. Open the dashboard through the PHP sign-in flow; do not open
 3. Keep the existing `bat405_analytics` setup for logins and the dashboard API.
    For a fresh prototype database, create the shared Program Chair demo account
    with `C:\\xampp\\php\\php.exe create_user.php admin@gmail.com "Program Chair"`.
-   Enter the shared prototype password at the secure prompt. The login form
-   pre-fills the demo email; reviewers enter the shared password at sign-in.
+   Enter the shared prototype password at the secure prompt. For local demo
+   autofill, set `SPARTAN_DEMO_EMAIL` and `SPARTAN_DEMO_PASSWORD`, or create
+   the Git-ignored `runtime/demo_credentials.php`; without a local password
+   setting, the form pre-fills the email and asks the reviewer to enter it.
 4. For a non-default MySQL account or port, configure `SPARTAN_DB_HOST`,
    `SPARTAN_DB_PORT`, `SPARTAN_DB_NAME`, `SPARTAN_DB_USER`, and
    `SPARTAN_DB_PASSWORD` for PHP and Python. The defaults target local XAMPP
